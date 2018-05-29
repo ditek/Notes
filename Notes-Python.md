@@ -494,7 +494,7 @@ Objects which provide predefined clean-up actions can be used within with struct
 # Strings
 - A string can be used as an array with `s[0]` its first letter and `s[-1]` its last letter.
 - String slicing:
-    ```python
+    ```
     s[1:5] = s[1] -> s[4]
     s[1:]  = s[1] -> s[len(s)-1]
     s[:5]  = s[0] -> s[4]
@@ -523,7 +523,6 @@ Python 2 uses `ASCII` by default, so unless you explicitly tell Python `# -*- co
 
 ---------------------------------------
 # RegEx
-```
     .           any character except newline [^\n\r]
     [\s\S]      any character including line breaks.
     \w          low-ascii word character (alphanumeric & underscore) [A-Za-z0-9_]
@@ -544,7 +543,6 @@ Python 2 uses `ASCII` by default, so unless you explicitly tell Python `# -*- co
     (?:abc)     non-capturing group
     (?=abc)     positive lookahead. Matches a group after an expression without including it (example 2)
     (?!abc)     negative lookahead. Discards a match if the group comes after an expression (example 3)
-```
 
 ## Groups
 ```python
@@ -564,11 +562,11 @@ Python 2 uses `ASCII` by default, so unless you explicitly tell Python `# -*- co
 
 ## Examples:
     1- (\w)a\1      hah dad bad dab gag gab =>  hah dad gag
-    2- \d(?=px)     1pt 2px 3em 4px     =>      2 4
-    3- \d(?!px)     1pt 2px 3em 4px     =>      1 3
+    2- \d(?=px)     1pt 2px 3em 4px         =>  2 4
+    3- \d(?!px)     1pt 2px 3em 4px         =>  1 3
     4- colou?r      color colour
-    5- <(.*)>       <h>Text</h>         =>      h>Text</h
-    6- <(.*?)>      <h>Text</h>         =>      Text
+    5- <(.*)>       <h>Text</h>             =>  h>Text</h
+    6- <(.*?)>      <h>Text</h>             =>  Text
 
 ## Regex functions
 ```python
@@ -690,11 +688,11 @@ finally:
 # Libraries
 ## Random
 ```python
-    import random
-    random.shuffle(list)                    # Shuffles the elements of a list or a string
-    random.choice(list)                     # Return a random item from the list
-    random.randrange(start=0, stop, step=1) # Return start <= n < stop
-    random.randint(start, stop)             # Return start <= n <= stop
+  import random
+  random.shuffle(list)                    # Shuffles the elements of a list or a tring
+  random.choice(list)                     # Return a random item from the list
+  random.randrange(start=0, stop, step=1) # Return start <= n < stop
+  random.randint(start, stop)             # Return start <= n <= stop
 ```
 
 ## Timeit
@@ -706,8 +704,8 @@ finally:
 - From within Python:
 ```python
 # Syntax
-  # `setup`: statement to be executed once initially
-  timeit.timeit(stmt='pass', setup='pass', number=1000000, globals=None)
+    # `setup`: statement to be executed once initially
+    timeit.timeit(stmt='pass', setup='pass', number=1000000, globals=None)
 # Example:
     import timeit
     timeit.timeit('"-".join(str(n) for n in range(100))', number=10000)
