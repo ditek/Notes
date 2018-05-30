@@ -7,7 +7,6 @@
     - [Cygwin Setup](#cygwin-setup)
     - [Multi-file projects](#multi-file-projects)
     - [Other](#other)
-- [Python debugger (pdb)](#python-debugger-pdb)
 - [Operators](#operators)
 - [Functions](#functions)
     - [Lambda](#lambda)
@@ -17,15 +16,16 @@
     - [If-else](#if-else)
     - [Ternary Operator](#ternary-operator)
     - [For Loop](#for-loop)
-- [Collections](#collections)
-    - [Lists](#lists)
-    - [Dictionaries](#dictionaries)
-    - [Sets](#sets)
-    - [Tuples](#tuples)
-        - [Definition](#definition)
-        - [Operations](#operations)
-        - [NamedTuples](#namedtuples)
-- [I/O and OS](#i-o-and-os)
+- [Types](#types)
+    - [Strings](#strings)
+        - [Functions](#functions)
+        - [Working with non-ascii strings](#working-with-non-ascii-strings)
+    - [Collections](#collections)
+        - [Lists](#lists)
+        - [Dictionaries](#dictionaries)
+        - [Sets](#sets)
+        - [Tuples](#tuples)
+- [I/O and OS](#io-and-os)
     - [Printing](#printing)
     - [Input](#input)
     - [Pretty Print](#pretty-print)
@@ -36,20 +36,18 @@
         - [File auto clean-up (auto close)](#file-auto-clean-up-auto-close)
     - [OS Operations](#os-operations)
     - [Issuing shell commands](#issuing-shell-commands)
-- [Strings](#strings)
-    - [Functions](#functions)
-    - [Working with non-ascii strings](#working-with-non-ascii-strings)
 - [RegEx](#regex)
     - [Groups](#groups)
-    - [Examples:](#examples)
+    - [Examples](#examples)
     - [Regex functions](#regex-functions)
         - [Flags](#flags)
 - [Exception Handling](#exception-handling)
-- [Simple GUI](#simple-gui)
+- [Python debugger (pdb)](#python-debugger-pdb)
 - [Libraries](#libraries)
     - [Random](#random)
     - [Timeit](#timeit)
-- [Unit Test (Nose)](#unit-test-nose)
+    - [Simple GUI](#simple-gui)
+    - [Nose (Unit Test)](#nose-unit-test)
 - [Profiling](#profiling)
 - [Multithreading](#multithreading)
     - [Using `threading` library](#using-threading-library)
@@ -64,9 +62,9 @@
 - [XML](#xml)
     - [Example](#example)
     - [Functions](#functions)
-- [Code Snippits](#code-snippits)
-    - [Using a dictionary of functions:](#using-a-dictionary-of-functions)
-    - [Using a dictionary to ease updating values:](#using-a-dictionary-to-ease-updating-values)
+- [Code Snippets](#code-snippets)
+    - [Using a dictionary of functions](#using-a-dictionary-of-functions)
+    - [Using a dictionary to ease updating values](#using-a-dictionary-to-ease-updating-values)
 
 <!-- /TOC -->
 
@@ -117,37 +115,6 @@
     --------|--------|--------
     Method1 |  0.446 |  1.87
     Method2 |  0.247 |  3.13
-
----------------------------------------
-# Python debugger (pdb)
-- Break execution and run pdb:  
-    `import pdb; pdb.set_trace()`
-- Useful PDB commands:
-    ```
-    p var           print
-    pp var          pretty print
-    ! statement     Execute the (one-line) statement in the context of the current stack frame.
-                    The '!' can be omitted unless the first word of the statement resembles a debugger command.
-    w(here)         Print a stack trace, with the most recent frame at the bottom.
-    u(up)           go up in call stack
-    d(own)          go down in call stack
-    l [n1[, n2]]    no args: list 11 lines of code around current line
-                    1 arg: list 11 lines around n1
-                    2 args: list lines between n1 and n2
-    ll(longlist)    List all source code for the current function or frame
-    a(rgs)          Print the argument list of the current function.
-    whatis expr     Print the type of the expression.
-    interact        Start an interative interpreter
-    s(tep)          Step in: Step to the next statement. If it is a function step into it.
-    n(ext)          Step over: Step to the next statement in the current function.
-    unt(il) [line]  With an arg, execute until the line is reached or the frame returns.
-    r(eturn)        Continue execution until the current function returns.
-    c(ont(inue))    Continue execution until the next breakpoint
-    j(ump) lineno   Set the next line that will be executed. Only available in the bottom-most frame.
-                    This lets you jump back and execute code again, or jump forward to skip code that you don’t want to run.
-                    Not all jumps are allowed – e.g. you cannot jump into the middle of a for loop or out of a finally clause.
-    q(uit)          Quit from the debugger. The program being executed is aborted.
-    ```
 
 ---------------------------------------
 # Operators
@@ -239,8 +206,40 @@ def use_class():
 ```
 
 ---------------------------------------
-# Collections
-## Lists
+# Types
+## Strings
+- A string can be used as an array with `s[0]` its first letter and `s[-1]` its last letter.
+- String slicing:
+    ```
+    s[1:5] = s[1] -> s[4]
+    s[1:]  = s[1] -> s[len(s)-1]
+    s[:5]  = s[0] -> s[4]
+    ```
+- Comparing strings: Simply done by testing equality (== or !=)
+
+### Functions
+```python
+    str.split(sep=None, maxsplit=-1)    # Return a list of strings in str which are separated by sep.
+    '1.2.3'.split('.')                  # ['1','2','3']
+    str.join(iterable)                  # Return the concatenation of the strings in the iterable separated by str.
+    '.'.join(['1', '2'])                # '1.2'
+    if sub_str in str1: ...
+    str.find(sub[, start[, end]])       # Return first occurance index of sub within s[start:end]. Return -1 if not found.
+    str.count(sub[, start[, end]])      # Return the number of non-overlapping occurrences of sub within s[start, end]
+    str.format(*args, **kwargs)         # Perform a string formatting operation.
+    str.isdigit()                       # Return true if all characters are digits and there is at least one character
+    # Evaluate a string as an expression
+    y = eval('[x*5 for x in range(2,10,2)]')    # y = [10, 20, 30, 40]
+```
+
+### Working with non-ascii strings
+Python 3 uses `utf-8` as the default source code encoding.
+
+Python 2 uses `ASCII` by default, so unless you explicitly tell Python `# -*- coding: utf-8 -*-` at the top of your file, it doesn't know how to handle character values above 127.
+
+---------------------------------------
+## Collections
+### Lists
 - They can contain objects of different data types.
 - Creating a list:
     ```python
@@ -297,7 +296,7 @@ def use_class():
         `somelist[:] = [x for x in somelist if should_keep(x)]`
 
 ---------------------------------------
-## Dictionaries
+### Dictionaries
 - A dictionary is a mapping between keys and values
 - Keys can be any non mutable value like numbers, strings or tuples. Values can be any data type.
 
@@ -319,7 +318,7 @@ def use_class():
 ```
 
 ---------------------------------------
-## Sets
+### Sets
 - A set is an unordered collection of unique elements.
 - Sets allow faster manipulation of their elements.
 
@@ -340,13 +339,13 @@ def use_class():
 ```
 
 ---------------------------------------
-## Tuples
+### Tuples
 - A `tuple` is a sequence of immutable Python objects.
 - The differences between tuples and lists are:
   - Tuples cannot be changed unlike lists
   - Tuples use parentheses, whereas lists use square brackets.
 
-### Definition
+#### Definition
 ```python
 # Parentheses are optional when defining a tuple
     tup0 = ();      # Empty tuple
@@ -357,7 +356,7 @@ def use_class():
     tup1 = (50,);
 ```
 
-### Operations
+#### Operations
 ```python
 # Assignment
     t1 = t2     # t1 and t2 will point to the same object
@@ -369,7 +368,7 @@ def use_class():
     ('Hi!',) * 4        # ('Hi!', 'Hi!', 'Hi!', 'Hi!')
 ```
 
-### NamedTuples
+#### NamedTuples
 - Named tuples assign meaning to each position in a tuple.
 - They can be used wherever regular tuples are used, and they add the ability to access fields by name instead of position index.
 
@@ -390,11 +389,11 @@ def use_class():
 # I/O and OS
 ## Printing
 ```python
-    # Python 2
+# Python 2
     print expression1 [, expression2] [, ...]
     print "Number", x, "isn't too much"
     print "Line No %d - %s" % (index, line)
-    # Python 3
+# Python 3
     print(expression1[, expression2, ...])
     print("Number", x, "isn't too much")
     print("Line No {} - {}".format(index, line))
@@ -402,7 +401,7 @@ def use_class():
 
 ## Input
 ```python
-    # reads one line and returns it
+    # Read one line and return it
     str_in = input("Enter your input: ")
 ```    
 
@@ -423,7 +422,7 @@ def use_class():
     f = open(file_name [, access_mode])
 ```
 
-Access modes:
+**Access modes:**
 ```
     'r'     read only, default mode
     'r+'    read/write
@@ -491,37 +490,6 @@ Objects which provide predefined clean-up actions can be used within with struct
 ```
 
 ---------------------------------------
-# Strings
-- A string can be used as an array with `s[0]` its first letter and `s[-1]` its last letter.
-- String slicing:
-    ```
-    s[1:5] = s[1] -> s[4]
-    s[1:]  = s[1] -> s[len(s)-1]
-    s[:5]  = s[0] -> s[4]
-    ```
-- Comparing strings: Simply done by testing equality (== or !=)
-
-## Functions
-```python
-    str.split(sep=None, maxsplit=-1)    # Return a list of strings in str which are separated by sep.
-    '1.2.3'.split('.')                  # ['1','2','3']
-    str.join(iterable)                  # Return the concatenation of the strings in the iterable separated by str.
-    '.'.join(['1', '2'])                # '1.2'
-    if sub_str in str1: ...
-    str.find(sub[, start[, end]])       # Return first occurance index of sub within s[start:end]. Return -1 if not found.
-    str.count(sub[, start[, end]])      # Return the number of non-overlapping occurrences of sub within s[start, end]
-    str.format(*args, **kwargs)         # Perform a string formatting operation.
-    str.isdigit()                       # Return true if all characters are digits and there is at least one character
-    # Evaluate a string as an expression
-    y = eval('[x*5 for x in range(2,10,2)]')    # y = [10, 20, 30, 40]
-```
-
-## Working with non-ascii strings
-Python 3 uses `utf-8` as the default source code encoding.
-
-Python 2 uses `ASCII` by default, so unless you explicitly tell Python `# -*- coding: utf-8 -*-` at the top of your file, it doesn't know how to handle character values above 127.
-
----------------------------------------
 # RegEx
     .           any character except newline [^\n\r]
     [\s\S]      any character including line breaks.
@@ -560,7 +528,7 @@ Python 2 uses `ASCII` by default, so unless you explicitly tell Python `# -*- co
     re.search(r'(\w)x\1', 'HxH HxG')    # 'HxH'
 ```
 
-## Examples:
+## Examples
     1- (\w)a\1      hah dad bad dab gag gab =>  hah dad gag
     2- \d(?=px)     1pt 2px 3em 4px         =>  2 4
     3- \d(?!px)     1pt 2px 3em 4px         =>  1 3
@@ -628,7 +596,65 @@ finally:
 ```
 
 ---------------------------------------
-# Simple GUI
+# Python debugger (pdb)
+To break execution and run pdb:  
+    `import pdb; pdb.set_trace()`
+
+**Useful PDB commands:**
+
+    p var           print
+    pp var          pretty print
+    ! statement     Execute the (one-line) statement in the context of the current stack frame.
+                    The '!' can be omitted unless the first word of the statement resembles a debugger command.
+    w(here)         Print a stack trace, with the most recent frame at the bottom.
+    u(up)           go up in call stack
+    d(own)          go down in call stack
+    l [n1[, n2]]    no args: list 11 lines of code around current line
+                    1 arg: list 11 lines around n1
+                    2 args: list lines between n1 and n2
+    ll(longlist)    List all source code for the current function or frame
+    a(rgs)          Print the argument list of the current function.
+    whatis expr     Print the type of the expression.
+    interact        Start an interative interpreter
+    s(tep)          Step in: Step to the next statement. If it is a function step into it.
+    n(ext)          Step over: Step to the next statement in the current function.
+    unt(il) [line]  With an arg, execute until the line is reached or the frame returns.
+    r(eturn)        Continue execution until the current function returns.
+    c(ont(inue))    Continue execution until the next breakpoint
+    j(ump) lineno   Set the next line that will be executed. Only available in the bottom-most frame.
+                    This lets you jump back and execute code again, or jump forward to skip code that you don’t want to run.
+                    Not all jumps are allowed – e.g. you cannot jump into the middle of a for loop or out of a finally clause.
+    q(uit)          Quit from the debugger. The program being executed is aborted.
+
+---------------------------------------
+# Libraries
+## Random
+```python
+  import random
+  random.shuffle(list)                    # Shuffles the elements of a list or a tring
+  random.choice(list)                     # Return a random item from the list
+  random.randrange(start=0, stop, step=1) # Return start <= n < stop
+  random.randint(start, stop)             # Return start <= n <= stop
+```
+
+## Timeit
+- From command-line interface:  
+    `$ python -m timeit [-n number] [-s setup] [statement ...]`
+    - If `-n` is not given, a suitable number of loops is calculated by trying successive powers of 10 until the total time is at least 0.2 seconds.
+    - Example:  
+        `$ python -m timeit '"-".join(str(n) for n in range(100))'`
+- From within Python:
+```python
+# Syntax
+    # `setup`: statement to be executed once initially
+    timeit.timeit(stmt='pass', setup='pass', number=1000000, globals=None)
+# Example:
+    import timeit
+    timeit.timeit('"-".join(str(n) for n in range(100))', number=10000)
+    timeit.timeit('my_func(10)', globals=globals())    # execute the code within your current global namespace
+```
+
+## Simple GUI
 ```python
 # Import
     import simplegui
@@ -684,36 +710,7 @@ finally:
     music.set_volume(0.5)   # Set volume to a value between 0-1.0
 ```
 
----------------------------------------
-# Libraries
-## Random
-```python
-  import random
-  random.shuffle(list)                    # Shuffles the elements of a list or a tring
-  random.choice(list)                     # Return a random item from the list
-  random.randrange(start=0, stop, step=1) # Return start <= n < stop
-  random.randint(start, stop)             # Return start <= n <= stop
-```
-
-## Timeit
-- From command-line interface:  
-    `$ python -m timeit [-n number] [-s setup] [statement ...]`
-    - If `-n` is not given, a suitable number of loops is calculated by trying successive powers of 10 until the total time is at least 0.2 seconds.
-    - Example:  
-        `$ python -m timeit '"-".join(str(n) for n in range(100))'`
-- From within Python:
-```python
-# Syntax
-    # `setup`: statement to be executed once initially
-    timeit.timeit(stmt='pass', setup='pass', number=1000000, globals=None)
-# Example:
-    import timeit
-    timeit.timeit('"-".join(str(n) for n in range(100))', number=10000)
-    timeit.timeit('my_func(10)', globals=globals())    # execute the code within your current global namespace
-```
-
----------------------------------------
-# Unit Test (Nose)
+## Nose (Unit Test)
 Every file starts with `test` is considered a test file. Every function starts with `test` is considered a test function.
 
 A `setup`/`teardown` function can be called before/after running the test using `with_setup` decorator:
@@ -902,8 +899,8 @@ Similar to the interface of the `multiprocessing.Pool`
 ```
 
 ---------------------------------------
-# Code Snippits
-## Using a dictionary of functions:
+# Code Snippets
+## Using a dictionary of functions
 ```python
     def f1():
         ...
@@ -916,7 +913,7 @@ Similar to the interface of the `multiprocessing.Pool`
                 inputs[i]()
 ```
 
-## Using a dictionary to ease updating values:
+## Using a dictionary to ease updating values
 ```python
     inputs = {'w':[0,2], 's':[0,-2], 'up':[1,2], 'down':[1,-2]}
     vel = [0,0]
