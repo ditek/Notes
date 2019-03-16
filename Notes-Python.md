@@ -1,7 +1,7 @@
-# Python
-<!-- TOC -->
 
-- [Python](#python)
+# Python
+<!-- MarkdownTOC -->
+
 - [Miscellaniuous](#miscellaniuous)
     - [Recommended Code Structure](#recommended-code-structure)
     - [Cygwin Setup](#cygwin-setup)
@@ -12,28 +12,33 @@
     - [Lambda](#lambda)
 - [Classes](#classes)
     - [Syntax](#syntax)
+    - [Check if a class attribute exists](#check-if-a-class-attribute-exists)
 - [Flow Control](#flow-control)
     - [If-else](#if-else)
     - [Ternary Operator](#ternary-operator)
     - [For Loop](#for-loop)
 - [Types](#types)
     - [Strings](#strings)
-        - [Functions](#functions)
+        - [Functions](#functions-1)
         - [Working with non-ascii strings](#working-with-non-ascii-strings)
     - [Collections](#collections)
         - [Lists](#lists)
         - [Dictionaries](#dictionaries)
         - [Sets](#sets)
         - [Tuples](#tuples)
+            - [Definition](#definition)
+            - [Operations](#operations)
+            - [NamedTuples](#namedtuples)
 - [I/O and OS](#io-and-os)
     - [Printing](#printing)
-    - [Input](#input)
+    - [Format Min-language](#format-min-language)
     - [Pretty Print](#pretty-print)
+    - [Input](#input)
     - [File manipulation](#file-manipulation)
         - [Opening files](#opening-files)
         - [Reading](#reading)
         - [File methods](#file-methods)
-        - [File auto clean-up (auto close)](#file-auto-clean-up-auto-close)
+        - [File auto clean-up \(auto close\)](#file-auto-clean-up-auto-close)
     - [OS Operations](#os-operations)
     - [Issuing shell commands](#issuing-shell-commands)
 - [RegEx](#regex)
@@ -42,16 +47,22 @@
     - [Regex functions](#regex-functions)
         - [Flags](#flags)
 - [Exception Handling](#exception-handling)
-- [Python debugger (pdb)](#python-debugger-pdb)
+- [Python debugger \(pdb\)](#python-debugger-pdb)
 - [Libraries](#libraries)
     - [Random](#random)
     - [Timeit](#timeit)
     - [Simple GUI](#simple-gui)
-    - [Nose (Unit Test)](#nose-unit-test)
+    - [Nose \(Unit Test\)](#nose-unit-test)
+    - [PyQt5](#pyqt5)
+        - [Components](#components)
+        - [Connecting Callbacks \(Slots\)](#connecting-callbacks-slots)
+        - [Multithreading](#multithreading)
+        - [Other](#other-1)
+            - [Change Widget Color](#change-widget-color)
 - [Profiling](#profiling)
-- [Multithreading](#multithreading)
+- [Multithreading](#multithreading-1)
     - [Using `threading` library](#using-threading-library)
-    - [Using ThreadPool](#using-threadpool)
+    - [Using `ThreadPool`](#using-threadpool)
 - [Multiprocessing](#multiprocessing)
     - [`Process` class](#process-class)
     - [`Pool` class](#pool-class)
@@ -59,14 +70,18 @@
     - [Async IO](#async-io)
     - [Issues](#issues)
 - [CSV](#csv)
+    - [CSV Reader](#csv-reader)
+    - [CSV Writer](#csv-writer)
 - [XML](#xml)
     - [Example](#example)
-    - [Functions](#functions)
+    - [Functions](#functions-2)
 - [Code Snippets](#code-snippets)
     - [Using a dictionary of functions](#using-a-dictionary-of-functions)
     - [Using a dictionary to ease updating values](#using-a-dictionary-to-ease-updating-values)
+    - [Google Drive API](#google-drive-api)
+    - [Run a Local Web Server](#run-a-local-web-server)
 
-<!-- /TOC -->
+<!-- /MarkdownTOC -->
 
 # Miscellaniuous
 ## Recommended Code Structure
@@ -101,20 +116,6 @@
 - Python allows fractions to be entered as `.1` (omitting the zero)
 - Reimport a module:  
     `import importlib; importlib.reload(module)`
-- Check if a class has an attribute:
-  - Method 1  
-  `hasattr(object, 'property')`
-  - Method 2  
-  `try: doStuff(a.property)`  
-  `except AttributeError: ...`
-  - Method 3  
-  `getattr(object, 'property', 'default value')`
-  - Performance  
-
-    Method  |Positive|Negative
-    --------|--------|--------
-    Method1 |  0.446 |  1.87
-    Method2 |  0.247 |  3.13
 
 ---------------------------------------
 # Operators
@@ -170,6 +171,22 @@ class MyClass:
 def use_class():
     x = MyClass("Testing class")
 ```
+
+## Check if a class attribute exists
+- Method 1  
+`hasattr(object, 'property')`
+- Method 2  
+`try: doStuff(a.property)`  
+`except AttributeError: ...`
+- Method 3  
+`getattr(object, 'property', 'default value')`
+- Performance  
+
+  Method  |Positive|Negative
+  --------|--------|--------
+  Method1 |  0.446 |  1.87
+  Method2 |  0.247 |  3.13
+
 
 ---------------------------------------
 # Flow Control
@@ -383,6 +400,10 @@ Python 2 uses `ASCII` by default, so unless you explicitly tell Python `# -*- co
     sum_res = p.x + p.y               # fields also accessible by name
     x, y = p                          # unpack like a regular tuple
     print(p)                          # >> Point(x=11, y=22)
+    # Convert tuple to namedtuple
+    t = (1, 2)
+    named_t = Point(*t)
+    named_t = Point._make(t)
 ```
 
 ---------------------------------------
@@ -392,18 +413,51 @@ Python 2 uses `ASCII` by default, so unless you explicitly tell Python `# -*- co
 # Python 2
     print expression1 [, expression2] [, ...]
     print "Number", x, "isn't too much"
-    print "Line No %d - %s" % (index, line)
+    print "Line No %d in %s" % (10, "test.py")
 # Python 3
     print(expression1[, expression2, ...])
     print("Number", x, "isn't too much")
-    print("Line No {} - {}".format(index, line))
+    print("Line No %d" % 10)
+    print("Line No %d in %s" % (10, "test.py"))
 ```
 
-## Input
+Using format:
+
 ```python
-    # Read one line and return it
-    str_in = input("Enter your input: ")
-```    
+    print("Line No {} in {}".format(10, "test.py"))
+    "First, thou shalt count to {0}"  # References first positional argument
+    "Bring me a {}"                   # Implicitly references the first positional argument
+    "From {} to {}"                   # Same as "From {0} to {1}"
+    "My quest is {name}"              # References keyword argument 'name'
+    "Weight in tons {0.weight}"       # 'weight' attribute of first positional arg
+    "Units destroyed: {players[0]}"   # First element of keyword argument 'players'.
+    "Harold's a clever {0!s}"         # Calls str() on the argument first
+    "Bring out the holy {name!r}"     # Calls repr() on the argument first
+    "More {!a}"                       # Calls ascii() on the argument first
+```
+
+## Format Min-language
+```
+    format_spec ::=  [[fill]align][sign][#][0][width][,][.precision][type]
+    fill        ::=  <any character>
+    align       ::=  "<" | ">" | "=" | "^"
+    sign        ::=  "+" | "-" | " "
+    #           ::   Valid for binary, octal, or hexadecimal output. Prefixes the output by '0b', '0o', or '0x'.
+    ,           ::   Use of a comma for a thousands separator
+    width       ::=  integer
+    precision   ::=  integer
+    type        ::=  "b" | "c" | "d" | "e" | "E" | "f" | "F" | "g" | "G" | "n" | "o" | "x" | "X" | "%"
+```
+
+```python
+    '{:0>4}'.format('Hi')                 # '00Hi'
+    '{:<30}'.format('left aligned')       # 'left aligned                  '
+    '{:>30}'.format('right aligned')      # '                 right aligned'
+    '{:^30}'.format('centered')           # '           centered           '
+    '{:*^30}'.format('centered')          # '***********centered***********'
+    'Percentage: {:.2%}'.format(1.0/3.0)  # 'Percentage: 33.33%'
+```
+
 
 ## Pretty Print
 ```python
@@ -415,6 +469,12 @@ Python 2 uses `ASCII` by default, so unless you explicitly tell Python `# -*- co
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(stuff)
 ```
+
+## Input
+```python
+    # Read one line and return it
+    str_in = input("Enter your input: ")
+```    
 
 ## File manipulation
 ### Opening files
@@ -455,6 +515,12 @@ Python 2 uses `ASCII` by default, so unless you explicitly tell Python `# -*- co
     f.name
     f.write(string)
     f.writelines(sequence)
+    # Check that a file/directory exists
+    from pathlib import Path
+    my_file = Path("/path/to/file")
+    if my_file.is_file():...
+    if my_file.is_dir():...
+    if my_file.exists():...
 ```
 
 ### File auto clean-up (auto close)
@@ -606,6 +672,7 @@ To break execution and run pdb:
     pp var          pretty print
     ! statement     Execute the (one-line) statement in the context of the current stack frame.
                     The '!' can be omitted unless the first word of the statement resembles a debugger command.
+    interact        Start an interactive Python interpreter
     w(here)         Print a stack trace, with the most recent frame at the bottom.
     u(up)           go up in call stack
     d(own)          go down in call stack
@@ -722,6 +789,125 @@ def test_something():
 ```
 
 ---------------------------------------
+## PyQt5
+### Components
+
+```python
+    # ComboBox
+    self.mode_box = QtWidgets.QComboBox()
+    self.mode_box.addItem("Telnet")
+    # Edit Box
+    self.edit_box = QtWidgets.QLineEdit()
+    self.edit_box.setMaxLength(25)
+    self.edit_box.setMaximumSize(40, 20)
+    self.edit_box.setAlignment(QtCore.Qt.AlignCenter)
+    self.edit_box.setEnabled(False)  # True by default
+    # Button
+    self.button = QtWidgets.QPushButton("Connect")
+    self.button.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)  # Size fits contents
+    # Checkbox
+    self.proxy = QtWidgets.QCheckBox("Proxy")
+    self.proxy.setTristate(False)
+    # Toolbar
+    self.ToolBar = self.addToolBar("Connect")
+    self.ToolBar.setMovable(False)
+    self.ToolBar.addWidget(self.mode_box)
+    self.ToolBar.addSeparator()
+    self.ToolBar.addWidget(self.edit_box)
+    # Statusbar
+    self.status_bar = self.statusBar()
+    self.status_bar.showMessage("Idle")
+    # Timer
+    self.timer = QtCore.QTimer()
+    self.timer.setInterval(10000)
+    self.timer.timeout.connect(self.perform_action)
+    self.timer.start()
+```
+
+### Connecting Callbacks (Slots)
+```python
+    edit_box.returnPressed.connect(my_handler)
+    self.button.clicked.connect(my_handler)
+    
+    def my_handler():
+        pass
+```
+
+### Multithreading
+- Threads communicate using signals (`pyqtSignal`).
+- A `pyqtSignal` has to be defined within a class derived from `QObject`. That can be a `QThread` or a custom class.
+- An optional decorator `@pyqtSlot` can be added to provide more efficiency and readablility.
+- Threads automatically emmit `started` and `finished` signals, which can be connected to slots.
+
+```python
+class DebugMonitor(QtCore.QObject):
+    # The type(s) of the signal parameter(s) need to be specified
+    error_signal = QtCore.pyqtSignal(str)
+
+    def __init__(self):
+        super().__init__()
+        self.error = False
+    
+    def emit_on_error(self):
+    if self.error:
+        self.error_signal.emit('There is an error')
+
+
+# In the working thread
+class FWComThread(QtCore.QThread):
+    fwcom_error = QtCore.pyqtSignal()
+
+    def __init__(self):
+        super().__init__()
+        self.debug_monitor = DebugMonitor()
+    
+    def run():
+        # What the thread needs to do
+
+
+# In the main thread
+class MainWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.fwcom_thread = FWComThread()
+        self.fwcom_thread.start()
+        self.fwcom_thread.finished.connect(thread_finished)
+        self.fwcom_thread.debug_monitor.error_signal.connect(self.set_monitor_err_msg)
+        self.fwcom_thread.fwcom_error.connect(self.fwcom_error)
+
+    def disconnect_signals(self):
+        self.fwcom_thread.fwcom_error.disconnect()
+
+    @QtCore.pyqtSlot
+    def set_monitor_err_msg(self, err_msg: str):
+        QtWidgets.QMessageBox.warning(self, 'Tag Monitor Error', err_msg)
+    
+    def fwcom_error(self):
+        QtWidgets.QMessageBox.warning(self, 'FWCOM Error', 'FWCOM crashed')
+
+    def thread_finished(self):
+        # gets executed if thread finished
+        pass
+
+app = QtWidgets.QApplication(sys.argv)
+window = MainWindow()
+# Optionally set the size
+window.resize(640, 480)
+window.show()
+app.exec_()
+```
+
+### Other
+#### Change Widget Color
+```python
+    def make_widget_red(widget: QtWidgets):
+        p = widget.palette()
+        p.setColor(widget.backgroundRole(), QtGui.QColor('red'))
+        widget.setPalette(p)
+```
+
+
+---------------------------------------
 # Profiling
 - You can optionally use `snakeviz` package for visualizing the results in the browser.
 - Run the profiler:  
@@ -748,7 +934,7 @@ def test_something():
         t.join()
 ```
 
-## Using ThreadPool
+## Using `ThreadPool`
 Similar to the interface of the `multiprocessing.Pool`
 
 ```python
@@ -834,21 +1020,43 @@ Similar to the interface of the `multiprocessing.Pool`
 ## Issues
 - The `multiprocessing` library uses `pickle` to serialize the functions that need to be passed to the processors, which does not always succeed.
 - The alternative to `pickle` is `dill`, which is used as the default serialization method in `pathos` implementation of `multiprocessing`.
-    ```python
-    import pathos.multiprocessing as mp
-    p = mp.Pool(4)
-    p.map(lambda x: x**2, range(10))
-    ```
+
+```python
+import pathos.multiprocessing as mp
+p = mp.Pool(4)
+p.map(lambda x: x**2, range(10))
+```
+
 - After importing `numpy` or `scipy` the CPU affinity is set to 1, which limits the process to one core.
-    ```python
-    # Check CPU affinity on Linux
-    import os
-    os.system('taskset -p %s' %os.getpid())
-    # Change CPU affinity on Linux
-    os.system('taskset -cp 0-%d %s' % (pool_size, os.getpid()))
-    ```
+
+```python
+# Check CPU affinity on Linux
+import os
+os.system('taskset -p %s' %os.getpid())
+# Change CPU affinity on Linux
+os.system('taskset -cp 0-%d %s' % (pool_size, os.getpid()))
+```
+
 ---------------------------------------
 # CSV
+
+## CSV Reader
+
+```
+1/2/2014,5,8,red
+no delimeter
+```
+```python
+import csv
+with open('example.csv') as csvfile:
+    # Return a reader, which is a list of lists
+    #[ ['1/2/2014', '5', '8', 'red'], ['no delimiter'] ]
+    readCSV = csv.reader(csvfile, delimiter=',')
+    for row in readCSV:
+        ...
+```
+
+## CSV Writer
 ```python
     import csv
     csvfile = open('filename.csv', 'w', newline='')
@@ -921,4 +1129,32 @@ Similar to the interface of the `multiprocessing.Pool`
         for i in inputs:
             if key == simplegui.KEY_MAP[i]:
                 vel[inputs[i][0]] += inputs[i][1]
+```
+
+## Google Drive API
+```python
+from __future__ import print_function
+
+from apiclient import discovery
+from httplib2 import Http
+from oauth2client import file, client, tools
+
+SCOPES = 'https://www.googleapis.com/auth/drive.readonly.metadata'
+store = file.Storage('storage.json')
+creds = store.get()
+if not creds or creds.invalid:
+    flow = client.flow_from_clientsecrets('client_id.json', SCOPES)
+    creds = tools.run_flow(flow, store)
+DRIVE = discovery.build('drive', 'v3', http=creds.authorize(Http()))
+
+files = DRIVE.files().list().execute().get('files', [])
+for f in files:
+    print(f['name'], f['mimeType'])
+```
+
+## Run a Local Web Server
+To run files from a local web server as `localhost:8000/myfile.html`, run Python as:
+
+```bash
+python -m http.server 8000
 ```
