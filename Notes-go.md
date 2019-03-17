@@ -2,6 +2,7 @@
 <!-- MarkdownTOC -->
 
 - [Packages](#packages)
+    - [Common Packages](#common-packages)
     - [Exported Names](#exported-names)
 - [Variables](#variables)
     - [Types](#types)
@@ -37,7 +38,7 @@
 - [IO](#io)
     - [Read Stdin](#read-stdin)
 - [Error Handling](#error-handling)
-- [Web Server](#web-server)
+- [Web](#web)
     - [HTTP Libarary](#http-libarary)
         - [HTTPS Support](#https-support)
         - [Other HTTP Functions](#other-http-functions)
@@ -50,6 +51,9 @@
 <!-- /MarkdownTOC -->
 
 # Packages
+
+## Common Packages
+
 ```go
 package main
 
@@ -700,7 +704,7 @@ func readFile(fileName string) (string, error) {
 
 _______________________________________________________________________________
 
-# Web Server
+# Web
 
 ## HTTP Libarary
 
