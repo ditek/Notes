@@ -1,53 +1,62 @@
-# Contents
-<!-- TOC -->
+# Flutter
+<!-- MarkdownTOC -->
 
-- [Contents](#contents)
-- [Random](#random)
+- [General](#general)
 - [Tips and Tricks](#tips-and-tricks)
 - [Dart](#dart)
-  - [General](#general)
-  - [Variables](#variables)
-  - [Operators and num class functions](#operators-and-num-class-functions)
-  - [Strings](#strings)
-  - [Functions](#functions)
-    - [Required Parameters](#required-parameters)
-    - [Lambdas (anonymous functions)](#lambdas-anonymous-functions)
-  - [Classes](#classes)
-  - [Flow Control](#flow-control)
-    - [ForEach](#foreach)
-  - [Collections](#collections)
-    - [Iterable](#iterable)
-    - [List](#list)
-    - [Queue](#queue)
-    - [Set](#set)
-    - [Map](#map)
+    - [General](#general-1)
+    - [Variables](#variables)
+    - [Operators and num class functions](#operators-and-num-class-functions)
+    - [Strings](#strings)
+    - [Functions](#functions)
+        - [Required Parameters](#required-parameters)
+        - [Lambdas \(anonymous functions\)](#lambdas-anonymous-functions)
+    - [Classes](#classes)
+    - [Flow Control](#flow-control)
+        - [ForEach](#foreach)
+    - [Collections](#collections)
+        - [Iterable](#iterable)
+        - [List](#list)
+        - [Queue](#queue)
+        - [Set](#set)
+        - [Map](#map)
 - [Widgets](#widgets)
-  - [StatelessWidget](#statelesswidget)
-  - [StatefulWidget](#statefulwidget)
-  - [Containers](#containers)
-    - [Container](#container)
-    - [Row and Column](#row-and-column)
-    - [Center](#center)
-    - [Align](#align)
-    - [Expanded](#expanded)
-    - [Flexible](#flexible)
-  - [Material](#material)
-  - [Text](#text)
-  - [SizedBox](#sizedbox)
-  - [Scaffold](#scaffold)
-  - [ListTile](#listtile)
-  - [ListView](#listview)
-  - [GridView](#gridview)
-  - [GestureDetector](#gesturedetector)
-  - [Inkwell](#inkwell)
-  - [Others Widgets](#others-widgets)
+    - [StatelessWidget](#statelesswidget)
+    - [StatefulWidget](#statefulwidget)
+    - [Containers](#containers)
+        - [Container](#container)
+        - [Row and Column](#row-and-column)
+        - [Center](#center)
+        - [Align](#align)
+        - [Expanded](#expanded)
+        - [Flexible](#flexible)
+        - [RotatedBox](#rotatedbox)
+    - [Material](#material)
+    - [Text](#text)
+    - [TextField](#textfield)
+    - [SizedBox](#sizedbox)
+    - [Scaffold](#scaffold)
+    - [ListTile](#listtile)
+    - [ListView](#listview)
+    - [GridView](#gridview)
+    - [GestureDetector](#gesturedetector)
+    - [Inkwell](#inkwell)
+    - [RawMaterialButton](#rawmaterialbutton)
+    - [Image](#image)
+    - [Others Widgets](#others-widgets)
+    - [Platform Specific](#platform-specific)
+    - [Theme](#theme)
+    - [ColorSwatch](#colorswatch)
 - [Navigation](#navigation)
 - [Platform Specific Code](#platform-specific-code)
+- [Custom Widgets](#custom-widgets)
+    - [Custom Button](#custom-button)
+    - [PulseAnimator](#pulseanimator)
 - [Test App](#test-app)
 
-<!-- /TOC -->
+<!-- /MarkdownTOC -->
 
-# Random
+# General
 - In Flutter, almost everything is a widget, including alignment, padding, and layout. The app itself is a widget, as it extends `StatelessWidget`, or example.
 - Whenever you change the internal state of a [State] object, make the change in a function that you pass to [setState]:
     ```js
@@ -182,7 +191,7 @@ class Point {
   }
 }
 ```
-
+________________________________________________________________________________________________
 ## Flow Control
 
 ```js
@@ -214,6 +223,7 @@ switch (command) {
 
 ```
 
+________________________________________________________________________________________________
 ## Collections
 ### Iterable
 Iterable is the base class of all Collections
@@ -413,6 +423,16 @@ new Row(children: [
 ### Flexible
 Gives a child the flexibility to expand to fill the available space in the main axis, but, unlike `Expanded`, `Flexible` does not require the child to fill the available space.
 
+### RotatedBox
+Rotates child widget.
+
+```js
+RotatedBox(
+  quarterTurns: 3,
+  child: RawMaterialButton(...),
+)
+```
+
 ## Material
 Creates a piece of material. Make sure that the context implements material before using it.
 
@@ -430,6 +450,26 @@ TextStyle
 final _biggerFont = const TextStyle(fontSize: 18.0);
 final _newTheme = Theme.of(context).textTheme.display1;
 return new Text('Hello World', style: _biggerFo nt,)
+```
+
+## TextField
+Used to capture user input. Can be used along with 'Directionality' widget to set text direction.
+
+```dart
+Directionality(
+  textDirection: TextDirection.rtl,
+  child: TextField(
+    keyboardType: TextInputType.number,
+    style: Theme.of(context).textTheme.display1,
+    decoration: InputDecoration(
+      labelText: 'Input',
+      labelStyle: Theme.of(context).textThem.display1,
+      boder: OutlineInputBorder(
+        borderRadius: BorderRadius.
+      )
+    )
+  )
+)
 ```
 
 ## SizedBox
@@ -542,11 +582,38 @@ myGrid = new GridView.count(
 ```
 
 ## GestureDetector
-Detects gestures
+Detects gestures on other widgets, like taping on an image.
+
+```js
+GestureDetector(
+  child: Image.network('flutter.io/image.png'),
+  onTap: () { print('The user tapped!');},
+)
+```
 
 ## Inkwell
 - Provides tap animation. One of the ancestors of `Inkwell` must be a `Material` widget.
 - The `InkWell` will not animate if the onTap function is null.
+
+## RawMaterialButton
+A button based on `Semantics`, `Material`, and `InkWell` widgets.
+
+```js
+final GestureTapCallback onPressed;
+myButton = RawMaterialButton(
+  fillColor: Colors.deepOrange,
+  splashColor: Colors.orange,
+  child: Text('PURCHASE', style: TextStyle(color: Colors.white)),
+  onPressed: onPressed,
+  shape: const StadiumBorder(),
+);
+```
+
+## Image
+
+```js
+Image.network('flutter.io/image.png')
+```
 
 ## Others Widgets
 
@@ -567,6 +634,31 @@ Overlaps a widget on top of another (similar to `FrameLayout`)
 
 `Card`  
 Organizes related info into a box with rounded corners and a drop shadow.
+
+## Platform Specific
+We can use the theme platform property to check the platform and change behavior accordingly
+
+```dart
+Theme.of(context).platform == TargetPlatform.iOS
+    ? CupertinoSwitch(...)
+    : Switch(...)
+```
+
+## Theme
+The
+
+## ColorSwatch
+A color that has a smaal table of related colors.
+```dart
+const _baseColor = ColorSwatch(0x33579186, {
+    50: Color(0x33579186),
+    100: Color(0xFF0ABC98),
+    'border': Color(0xFF20877E),
+  })
+...
+color: _baseColor[50]
+```
+
 ________________________________________________________________________________________________
 # Navigation
 To navigate form one screen from another we use the `Navigator` class.
@@ -593,6 +685,97 @@ onPressed: () {
 
 ________________________________________________________________________________________________
 # Platform Specific Code
+
+________________________________________________________________________________________________
+# Custom Widgets
+## Custom Button
+
+```js
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+class FancyButton extends StatelessWidget {
+  final GestureTapCallback onPressed;
+
+  FancyButton({@required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return RawMaterialButton(
+      fillColor: Colors.deepOrange,
+      splashColor: Colors.orange,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 8.0,
+          horizontal: 20.0,
+        ),
+        child: Text('PURCHASE', style: TextStyle(color: Colors.white)),
+      ),
+      onPressed: onPressed,
+      shape: const StadiumBorder(),
+    );
+  }
+}
+```
+
+________________________________________________________________________________________________
+## PulseAnimator
+Adds pulse animation to the child widget.
+
+```js
+class PulseAnimator extends StatefulWidget {
+  final Widget child;
+
+  const PulseAnimator({Key key, this.child}) : super(key: key);
+
+  @override
+  State createState() => _PulseAnimatorState();
+}
+
+class _PulseAnimatorState extends State<PulseAnimator>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: TweenAndBack(begin: 0.5, end: 1.0).animate(_controller),
+      child: widget.child,
+    );
+  }
+}
+
+class TweenAndBack<T extends dynamic> extends Tween<T> {
+  TweenAndBack({T begin, T end}) : super(begin: begin, end: end);
+
+  @override
+  T lerp(double t) {
+    assert(begin != null);
+    assert(end != null);
+    if (t < 0.5) {
+      return begin + (end - begin) * t * 2;
+    } else {
+      return end + (begin - end) * (t * 2 - 1);
+    }
+  }
+}
+
+```
 
 ________________________________________________________________________________________________
 # Test App

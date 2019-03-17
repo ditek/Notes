@@ -1,7 +1,6 @@
 # Rust
-<!-- TOC -->
+<!-- MarkdownTOC -->
 
-- [Rust](#rust)
 - [General](#general)
 - [Preludes and Imports](#preludes-and-imports)
 - [Variables](#variables)
@@ -22,7 +21,8 @@
 - [Handling Errors](#handling-errors)
 - [Sample Code](#sample-code)
 
-<!-- /TOC -->
+<!-- /MarkdownTOC -->
+
 # General
 - References are immutable by default. Hence, to get a mutable reference, we need to write `&mut var`, rather than `&var` even if `var` is mutable.
 

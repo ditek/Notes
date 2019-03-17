@@ -2,7 +2,6 @@
 
 <!-- TOC -->
 
-- [Kotlin](#kotlin)
 - [Variables](#variables)
 - [Functions](#functions)
     - [Unit](#unit)
