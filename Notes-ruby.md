@@ -1,6 +1,20 @@
 # Ruby
-## Install
+<!-- MarkdownTOC -->
+
+- [Install \(here\)](#install-here)
+- [Data Types](#data-types)
+- [Database](#database)
+    - [Create](#create)
+    - [Read](#read)
+    - [Update](#update)
+    - [Delete](#delete)
+- [Tutorials](#tutorials)
+
+<!-- /MarkdownTOC -->
+
+## Install (here)
 https://gorails.com/setup/windows/10
+http://guides.railsgirls.com/install
 
 ```bash
 sudo apt update
@@ -36,6 +50,10 @@ rake db:create
 # Run the server
 rails server
 # You can now visit http://localhost:3000 to view your new website!
+
+# If your using Linux (not WSL) make sure postgresql service is running
+sudo service postgresql start
+service postgresql status
 ```
 
 ## Data Types
@@ -101,3 +119,5 @@ Tweet.destroy_all
 * http://railsforzombies.org/
 * https://stackoverflow.com/questions/7164484/ruby-on-rails-quickstart
 * https://www.tutorialspoint.com/ruby-on-rails/rails-quick-guide.htm
+* http://guides.railsgirls.com/app
+
