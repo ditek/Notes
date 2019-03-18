@@ -1757,11 +1757,11 @@ ________________________________________________________________________________
 # Java Views and XML Layouts
 - To turn an xml layout into java view objects, we need to inflate the layout. After the layout is inflated, we need to associate it with an Activity or Fragment. This process of inflating and associating is a little different depending on whether it’s a layout for an Activity or Fragment.
 
-** For an Activity **
+**For an Activity**
 - We inflate the layout and associate it with the Activity by calling the setContentView method in onCreate in our Activity:  
 `setContentView(R.layout.activity_main);`
 
-** For a Fragment **
+**For a Fragment**
 - In our Fragment classes we inflate the layout in the `onCreateView` method, which includes a `LayoutInflater` as a parameter:  
 `View rootView = inflater.inflate(R.layout.fragment_main, container, false);`
 - The root view, or view element which contains all the other views, is returned by the inflate method of the `LayoutInflater`. We then should return this rootView for the `onCreateView`.
@@ -3889,7 +3889,7 @@ ________________________________________________________________________________
 - You should use a traditional Activity that hosts a `PreferenceFragment` that displays your app settings or use `PreferenceActivity` (deprecated) to create a two-pane layout for large screens when you have multiple groups of settings.
 
 ## Should I use preferences?
-![](http://developer.android.com/design/media/settings_flowchart.png)
+![](https://developer.android.com/design/media/settings_flowchart.png)
 
 ## Common Preferences Objects
 - `CheckBoxPreference`
