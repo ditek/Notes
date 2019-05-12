@@ -15,6 +15,7 @@
         - [Set](#set)
     - [Strings](#strings)
     - [Structs](#structs)
+        - [Type Embedding](#type-embedding)
 - [Functions](#functions)
     - [Closures](#closures)
     - [Methods](#methods)
@@ -44,9 +45,11 @@
         - [Other HTTP Functions](#other-http-functions)
     - [WebSocket](#websocket)
     - [Network I/O](#network-io)
+- [JSON](#json)
 - [Miscellaneous](#miscellaneous)
     - [Execution Time](#execution-time)
     - [To write about](#to-write-about)
+    - [Modules](#modules)
 
 <!-- /MarkdownTOC -->
 
@@ -96,6 +99,17 @@ const (
     X = 1
     Y = 2
 )
+
+// Enumerate constants using iota
+const (
+    X = iota    // 0
+    Y           // 1
+    Z           // 2
+    A = 5 * iota    // 0
+    B               // 5
+    C               // 10
+)
+
 // Declaration (variable takes a default value)
 var num int
 var nums []int
@@ -151,7 +165,7 @@ ptr = &i
 ## Data Structures
 
 ### Array
-An array is a list with a fixed size, and it can't be changed at runtime.
+An array is a list with a fixed size, which can't be changed at runtime. In other words, arrays are typed by the elements they contain and the number of elements.
 
 ```go
 var a [4]int            // array of 4 ints
@@ -179,6 +193,9 @@ b = a                       // compile error: mismatched array size
 b = a[0:len(a)]             // works!
 b = a[:]                    // works!
 
+// Make an empty slice
+b := make([]int, 3)
+
 // 2D Slice
 matrix := make([][]uint8, dy)
 for i := range matrix {
@@ -197,6 +214,8 @@ var b []int
 b = make([]int, 5)     // len(b)=5
 b = make([]int, 0, 5)  // len(b)=0, cap(b)=5
 // Copy
+c := make([]int, len(b))
+copy(c, b)
 //Append
 var b []int
 b = append(b, 1)        // b = [1]
@@ -213,18 +232,29 @@ isSorted := sort.IntsAreSorted(ints)
 The zero value of a map is `nil`. A `nil` map has no keys, nor can keys be added. The `make` function returns a map of the given type, initialized and ready for use.
 
 ```go
-var age map[string]int
-age = make(map[string]int)      // Initialize and return an empty map
-age["Jon"] = 15
-age["Tom"]++                    // A new field will be initialized to 0 so age["Tom"] == 1
+var m map[string]int
+m = make(map[string]int)      // Initialize and return an empty map
+m := map[string]int {}
+m["Jon"] = 15
+m["Tom"]++                    // A new field will be initialized to 0 so m["Tom"] == 1
 // Map literals
-var age = map[string]int{
+var m = map[string]int{
     "Jon": 15,
 }
 // Delete an element
 delete(m, key)
 // Test that a key is present with a two-value assignment:
 elem, ok = m[key]
+// Looking up a non-existing key return the default type value
+elem = m["I don't exist"]       // elem = 0
+// Iteration
+for k, v := range m {...}
+// Extract keys
+m := make(map[int]string)
+keys := make([]int, 0, len(m))
+for k := range m {
+    keys = append(keys, k)
+}
 ```
 
 ### Set
@@ -233,15 +263,13 @@ Go doesn't have sets. However, a `map` can be used to achieve the same behaviour
 ```go
 set := map[string]bool {"1": true}
 found := set["1"]   // found == true
-found := set["2"]   // found == false   
+found := set["2"]   // found == false
 ```
 
 ## Strings
 - Concatenation is done with a `+`
 
-```go
-func Fields(s string) []string
-```
+For string operations (e.g. replace, slice, etc.), the packge `strings` is used.
 
 ## Structs
 ```go
@@ -259,6 +287,28 @@ var y = x               // Deep copy
 if x == y {}            // Returns true if all the fields are equal
 ptr := &x
 ptr.age = 15            // Same as (*ptr).age
+```
+
+### Type Embedding
+Type embedding is a way for a type to use exported fields and methods of another type as if they were its own. That's done by including the embedded type as a nameless (anonymous) field.
+
+```go
+type Person struct {
+    Name string
+}
+type Parent struct {
+    Person
+    NumChildren int
+}
+func (p Person) printName() {
+    fmt.Println(p.Name)
+}
+
+john := Parent{
+    Person:      Person{Name: "John"},
+    NumChildren: 3,
+}
+john.printName()
 ```
 
 _______________________________________________________________________________
@@ -610,6 +660,7 @@ func main() {
 
 _______________________________________________________________________________
 # Flow control
+
 ## If
 The `if` statement can start with a short statement to execute before the condition. Variables declared by the statement are only in scope until the end of the `if`.
 
@@ -618,7 +669,7 @@ if v := getV(); v < 0 { x = v }
 ```
 
 ## Foreach
-Used to iterate over a slice or a map. The type of the index and the value is inferred since we use `:=`.
+Used to iterate over a slice or a map. The type of the index and the value are inferred since we use `:=`.
 
 ```go
 for i, v := range nums {}   // We get item index and value
@@ -641,14 +692,24 @@ for x == 1 { ... }
 ## Switch
 ```go
 switch name := getName(); name {
-    case "Jon": x = 1
+    case "A": x = 1
+    case "B", "C": x = 2
     default: x = 2
 }
 
-// Switch can be written with no condition
+// Switch can be written with no condition. Works like if/else
 switch {
     case x == 1: ...
     case x == 2: ...
+}
+
+// Type switch
+whatAmI := func(i interface{}) {
+    switch t := i.(type) {
+    case bool:  fmt.Println("I'm a bool")
+    case int:   fmt.Println("I'm an int")
+    default:    fmt.Printf("Don't know type %T\n", t)
+    }
 }
 ```
 
@@ -858,6 +919,49 @@ for {
 ```
 
 _______________________________________________________________________________
+# JSON
+
+```go
+import "encoding/json"
+
+type Bird struct {
+  Species string
+  Description string
+}
+
+// Unmarshal is not case sensitive
+birdJson := `{"Species": "pigeon","description": "likes to perch on rocks"}`
+var bird Bird
+json.Unmarshal([]byte(birdJson), &bird)
+
+birdJson := `[{"species": "pigeon","decription": "likes to perch on rocks"}, \
+{"species": "eagle","description": "bird of prey"}]`
+var birds []Bird
+json.Unmarshal([]byte(birdJson), &birds)
+
+// Marshal is case sensitive
+bird := Bird{
+    Species: "pigeon"
+    Description: "likes to perch on rocks"
+}
+jsonStr, err := json.Marshal(bird)
+jsonStr == `{"Species": "pigeon","Description": "likes to perch on rocks"}`
+
+// We can spesify custom field names
+type Bird struct {
+  Species string `json:"species"`
+  Description string `json:"desc"`
+}
+jsonStr == `{"species": "pigeon","desc": "likes to perch on rocks"}`
+
+// Fields can be optional
+type MyStruct struct {
+    Name  string `json:"name"`
+    Email string `json:"email,omitempty"`
+}
+```
+
+_______________________________________________________________________________
 
 # Miscellaneous
 
@@ -872,3 +976,14 @@ log.Printf("Function took %s", elapsed)
 ## To write about
 - HTTP templates: https://golang.org/doc/articles/wiki/
 
+## Modules
+A module is a collection of related Go packages that are versioned together as a single unit.
+
+```sh
+# Initialize the module and create go.mod
+go mod init <module_name>
+# Create vendor directory
+go mod vendor
+# Prune any no-longer-needed dependencies
+go mod tidy
+```
