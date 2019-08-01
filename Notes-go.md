@@ -6,7 +6,7 @@
     - [Exported Names](#exported-names)
 - [Variables](#variables)
     - [Types](#types)
-    - [Casting](#casting)
+    - [Casting and Type Conversion](#casting-and-type-conversion)
     - [Pointers](#pointers)
     - [Data Structures](#data-structures)
         - [Array](#array)
@@ -14,6 +14,7 @@
         - [Map](#map)
         - [Set](#set)
     - [Strings](#strings)
+        - [Strings Package](#strings-package)
     - [Structs](#structs)
         - [Type Embedding](#type-embedding)
 - [Functions](#functions)
@@ -21,7 +22,11 @@
     - [Methods](#methods)
     - [Goroutines](#goroutines)
         - [Channels](#channels)
+            - [Closing a Channel](#closing-a-channel)
+            - [Channel Select](#channel-select)
         - [Syncing Goroutines](#syncing-goroutines)
+            - [Syncing with Channels](#syncing-with-channels)
+            - [Syncing with WaitGroup](#syncing-with-waitgroup)
         - [Mutex](#mutex)
 - [Interfaces](#interfaces)
     - [The Empty Interface](#the-empty-interface)
@@ -38,18 +43,31 @@
     - [Defer](#defer)
 - [IO](#io)
     - [Read Stdin](#read-stdin)
+    - [Read Files](#read-files)
+    - [Print \(fmt\)](#print-fmt)
+        - [Format Verbs](#format-verbs)
 - [Error Handling](#error-handling)
+    - [Error Types](#error-types)
+    - [Adding context to an error](#adding-context-to-an-error)
 - [Web](#web)
-    - [HTTP Libarary](#http-libarary)
+    - [HTTP Library](#http-library)
         - [HTTPS Support](#https-support)
         - [Other HTTP Functions](#other-http-functions)
     - [WebSocket](#websocket)
     - [Network I/O](#network-io)
 - [JSON](#json)
+- [Reflection](#reflection)
+- [Testing](#testing)
+    - [Subtests](#subtests)
+    - [Helper Functions](#helper-functions)
+    - [Examples](#examples)
+    - [Benchmarks](#benchmarks)
 - [Miscellaneous](#miscellaneous)
     - [Execution Time](#execution-time)
-    - [To write about](#to-write-about)
     - [Modules](#modules)
+    - [Helpful Tools](#helpful-tools)
+        - [StaticCheck](#staticcheck)
+    - [To write about](#to-write-about)
 
 <!-- /MarkdownTOC -->
 
@@ -61,8 +79,7 @@
 package main
 
 import "fmt"            // String formatting
-fmt.Println("The value is ", x, "seconds")
-fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
+import "strings"        // String manipulation
 
 import "math/rand"      // Generating random numbers
 rand.Intn(x int)        // Return a random int in range 0:x-1
@@ -82,9 +99,6 @@ done := time.After(50 * time.Millisecond)   // Return a channel on which a times
     case <-done:
         fmt.Println("done")
     }
-
-import "strings"
-func Fields(s string) []string      // Split a string by whitespaces
 ```
 
 ## Exported Names
@@ -133,8 +147,8 @@ bool
 string
 int  int8  int16  int32  int64
 uint uint8 uint16 uint32 uint64 uintptr
-byte // alias for uint8
-rune // alias for int32 - represents a Unicode code point
+byte                // alias for uint8
+rune                // alias for int32 - represents a Unicode code point
 float32 float64
 complex64 complex128
 ```
@@ -145,11 +159,35 @@ Defining a new type:
 type MyFloat float64
 ```
 
-## Casting
+## Casting and Type Conversion
 `T(v)` converts the value `v` to the type `T`
 
 ```go
+// int -> float64
 a := float64(4)
+
+// string -> int
+a := strconv.Atoi(s)
+
+// int -> string
+a := 123
+s := string(a)                      // s = "E" (ASCII)
+s := strconv.Itoa(a)                // s = "123"
+s := fmt.Sprintf("%d", a)           // s = "123"    (uses more resources thatn `Itoa`)
+
+// int64 -> string
+var a int64 = 123
+s := strconv.FormatInt(a, 10)       // s = "123"
+
+// int64 -> string
+var a uint64 = 123
+s := strconv.FormatUint(a, 10)      // s = "123"
+
+// int -> []byte
+import "encoding/binary"
+bytes := make([]byte, 2)
+binary.LittleEndian.PutUint16(bytes, uint16(num))
+return bytes
 ```
 
 ## Pointers
@@ -168,10 +206,11 @@ ptr = &i
 An array is a list with a fixed size, which can't be changed at runtime. In other words, arrays are typed by the elements they contain and the number of elements.
 
 ```go
-var a [4]int            // array of 4 ints
+var a [4]int                // array of 4 ints
 a = [4]int{1, 2, 4, 6}
-a = [4]int{}            // all  two values default to 0's
-a = [4]int{1, 2}        // last two values default to 0's
+a = [4]int{}                // all values default to 0's
+a = [4]int{1, 2}            // last two values default to 0's
+a := [...]int{1, 2, 4, 6}   // The capacity is infered
 ```
 
 ### Slice
@@ -206,26 +245,36 @@ for y, row := range matrix {
         row[x] = uint8(x * y)
     }
 }
+```
 
-// Functions
+__Operations on Slices__
+
+```go
 var a [4]int
 var b []int
+
 // Creating a slice
 b = make([]int, 5)     // len(b)=5
 b = make([]int, 0, 5)  // len(b)=0, cap(b)=5
+
 // Copy
 c := make([]int, len(b))
 copy(c, b)
-//Append
+
+// Append
 var b []int
 b = append(b, 1)        // b = [1]
 b = append(b, 2, 3)     // b = [1, 2, 3]
+
 // Sorting
 strs := []string{"c", "a", "b"}
 sort.Strings(strs)
 ints := []int{7, 2, 4}
 sort.Ints(ints)
 isSorted := sort.IntsAreSorted(ints)
+
+// Compare (Beware! This is not type safe)
+isEqual := reflect.DeepEqual(b, []int{1, 2})
 ```
 
 ### Map
@@ -267,9 +316,20 @@ found := set["2"]   // found == false
 ```
 
 ## Strings
-- Concatenation is done with a `+`
+Strings are defined between double quotes "" or backticks ``. In backticks, backslashes have no special meaning and the string may contain newlines.
 
-For string operations (e.g. replace, slice, etc.), the packge `strings` is used.
+Concatenation is done with a `+`
+
+### Strings Package
+
+For string operations (e.g. replace, slice, etc.), the package `strings` is used.
+
+```go
+import "strings"
+
+// Split a string by whitespaces
+func Fields(s string) []string
+```
 
 ## Structs
 ```go
@@ -330,7 +390,7 @@ func split(sum int) (x, y int) {
 // In-line functions
 x := sum(a,b int) { return a+b }
 
-//** Ellipsis (three dots) notation **//
+//** Ellipsis (three dots) notation allows writing variadic functions **//
 // `nums` is of type []int
 func sum(nums ...int) int { }
 sum()       // Actually passes {}
@@ -377,7 +437,7 @@ func (p Point) Abs() float64 {
     return math.Sqrt(p.X*p.X + p.Y*p.Y)
 }
 
-// Methods with a pointer receiver are used to pass a refernce
+// Methods with a pointer receiver are used to pass a reference
 func (p *Point) Scale(f float64) {
     p.X = p.X * f
     p.Y = p.Y * f
@@ -395,8 +455,8 @@ A _goroutine_ is a lightweight thread managed by the Go runtime.
 
 ### Channels
 Channels allow sending and receiving values cross goroutines with the channel operator `<-`. Channels can be:
-- Unbuffered channels: By default, channel sends and receives block until the other side is ready allowing synchronization.
-- Buffered channels: Provide the buffer length as the second argument to `make` to initialize a buffered channel. It behaves as FIFO. In this case, sends block when the buffer is full. Receives block when the buffer is empty.
+- _Unbuffered channels_: By default, channel sends and receives block until the other side is ready allowing synchronization.
+- _Buffered channels_: Provide the buffer length as the second argument to `make` to initialize a buffered channel. It behaves as FIFO. In this case, sends block when the buffer is full. Receives block when the buffer is empty.
 
 ```go
 ch := make(chan T)          // Unbuffered channel
@@ -524,7 +584,7 @@ func main() {
         go increment(&m)
     }
     fmt.Println("final value of x", x)
-    // This example just shows the mutext syntax. The program will probably finish before the threads return. See WaitGroup.
+    // This example just shows the mutex syntax. The program will probably finish before the threads return. See WaitGroup.
 }
 ```
 
@@ -586,10 +646,10 @@ t := i.(T)
 t, ok := i.(T)
 ```
 
-The first statement will trigger a panic if `i` doesn't hold a `T`. The second statement will set `ok` to `true` and set `t` to the value of `i` if it holds a `T`. If not, `ok` will be `false` and `t` will be the zero value of type `T`, and no panic occurs. 
+The first statement will trigger a panic if `i` doesn't hold a `T`. The second statement will set `ok` to `true` and set `t` to the value of `i` if it holds a `T`. If not, `ok` will be `false` and `t` will be the zero value of type `T`, and no panic occurs.
 
 ## Type Switch
-A type switch is like a regular switch statement, but the cases in a type switch specify types (not values), and those values are compared against the type of the value held by the given interface value. 
+A type switch is like a regular switch statement, but the cases in a type switch specify types (not values), and those values are compared against the type of the value held by the given interface value.
 
 ```go
 switch v := i.(type) {
@@ -750,6 +810,76 @@ func read_input() (string, error) {
 }
 ```
 
+## Read Files
+```go
+// Open file for read access.
+file, err := os.Open("file.go")
+if err != nil {
+    log.Fatal(err)
+}
+// Read n bytes from a file
+data := make([]byte, 100)
+count, err := file.Read(data)
+
+// Read all bytes in a file
+import "io/ioutil"
+data, err := ioutil.ReadAll(file)
+```
+
+## Print (fmt)
+```go
+import "fmt"
+// Print to console
+fmt.Println(1, "x")
+// Print to a string
+fmt.Sprintf()
+
+// Print with formatting
+fmt.Printf("string %s, int %d, struct with field names %+v")    // Struct fields
+fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)             // Length and capacity of a slice
+
+// JSON MarshalIndent can be used to format format a struct before printing its contents
+s, err := json.MarshalIndent(person, "", "\t")
+```
+
+### Format Verbs
+
+```bash
+# General
+%v  the value in a default format. When printing structs, the plus flag (%+v) adds field names
+%#v a Go-syntax representation of the value
+%T  a Go-syntax representation of the type of the value
+%%  a literal percent sign; consumes no value
+
+# Boolean:
+%t  the word true or false
+
+#Integer:
+%b  base 2
+%c  the character represented by the corresponding Unicode code point
+%d  base 10
+%o  base 8
+%q  a single-quoted character literal safely escaped with Go syntax.
+%x  base 16, with lower-case letters for a-f
+%X  base 16, with upper-case letters for A-F
+%U  Unicode format: U+1234; same as "U+%04X"
+
+# Floating-point and complex constituents:
+%b  decimalless scientific notation with exponent a power of two e.g. -123456p-78
+%e  scientific notation, e.g. -1.234456e+78
+%f  decimal point but no exponent, e.g. 123.456
+%g  %e for large exponents, %f otherwise
+
+# String and slice of bytes:
+%s  the uninterpreted bytes of the string or slice
+%q  a double-quoted string safely escaped with Go syntax
+%x  base 16, lower-case, two characters per byte
+%X  base 16, upper-case, two characters per byte
+
+# Pointer:
+%p  base 16 notation, with leading 0x
+```
+
 _______________________________________________________________________________
 # Error Handling
 There is an interface called `error` which has one method `Error() string`. Functions usually return a tuple, with an `error` value last. The value is set to `nil` if no error occurs.
@@ -763,11 +893,39 @@ func readFile(fileName string) (string, error) {
 }
 ```
 
+## Error Types
+Errors are not just strings, they have types as well. To print error type:
+
+```go
+fmt.print("%T", err)
+```
+
+Checking the error type can be useful if we have different potential error sources:
+
+```go
+switch errType := err.(type) {
+case *net.OpError:
+    ...
+}
+```
+
+## Adding context to an error
+The `errors.Wrap` function returns a new error that adds context to the original error, basically constructing a stack of errors. For example
+
+```go
+import "github.com/pkg/errors"
+
+_, err := ioutil.ReadAll(r)
+if err != nil {
+        return errors.Wrap(err, "read failed")
+}
+```
+
 _______________________________________________________________________________
 
 # Web
 
-## HTTP Libarary
+## HTTP Library
 
 **1. Handle dynamic requests**
 
@@ -807,6 +965,10 @@ To serve static assets like JavaScript, CSS and images, we use the inbuilt `http
 ```go
 http.Handle("/static", http.FileServer(http.Dir("./src")))
 // http.Handle("/static/", http.StripPrefix("/static/", fs))    // Not sure if Strip is needed
+// OR
+http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+    http.ServeFile(w, r, "./src")
+})
 ```
 
 **3. Accept connections (listen to a port)**
@@ -839,6 +1001,13 @@ WebSocket is an alternative protocol to HTTP, providing full-duplex communicatio
 A websocket is obtained by upgrading an HTTP connection.
 
 ```go
+import (
+    "net/http"
+    "github.com/gorilla/websocket"
+)
+
+const maxMessageSize = 1024
+
 var upgrader = websocket.Upgrader{
     ReadBufferSize:  maxMessageSize,    // optional
     WriteBufferSize: maxMessageSize,    // optional
@@ -846,7 +1015,10 @@ var upgrader = websocket.Upgrader{
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
     conn, err := upgrader.Upgrade(w, r, nil)
-    checkErr(err)
+    if err != nil {
+        log.Println(err)
+        return
+    }
     // Receive a message
     // p is a []byte and messageType is an int with value websocket.BinaryMessage or websocket.TextMessage
     messageType, p, err := conn.ReadMessage()
@@ -862,10 +1034,9 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    router.HandleFunc("/ws", wsHandler)
-    http.ListenAndServe(":88", nil)
+    http.HandleFunc("/ws", wsHandler)   // Will listen to ws://localhost:80/ws
+    http.ListenAndServe(":80", nil)
 }
-
 ```
 
 ```js
@@ -924,40 +1095,198 @@ _______________________________________________________________________________
 ```go
 import "encoding/json"
 
-type Bird struct {
-  Species string
-  Description string
+type Person struct {
+  Name string `json:"name"`
+  Age  int    `json:"years"`
 }
 
-// Unmarshal is not case sensitive
-birdJson := `{"Species": "pigeon","description": "likes to perch on rocks"}`
-var bird Bird
-json.Unmarshal([]byte(birdJson), &bird)
+// Unmarshal
+data := `{"Name": "Jon", "Age": 10}`
+var person Person
+err := json.Unmarshal([]byte(data), &person)
 
-birdJson := `[{"species": "pigeon","decription": "likes to perch on rocks"}, \
-{"species": "eagle","description": "bird of prey"}]`
-var birds []Bird
-json.Unmarshal([]byte(birdJson), &birds)
+// Marshal
+person := Person{ Name: "Jon", Age: 10 }
+jsonStr, err := json.Marshal(person)    // jsonStr == `{"Name": "Jon","Age": 10}`
+```
 
-// Marshal is case sensitive
-bird := Bird{
-    Species: "pigeon"
-    Description: "likes to perch on rocks"
+The struct doesn't need to specify all possible JSON fields.
+
+```go
+type Person struct {
+  Name string `json:"name"`
+  Job  string `json:"job"`
 }
-jsonStr, err := json.Marshal(bird)
-jsonStr == `{"Species": "pigeon","Description": "likes to perch on rocks"}`
+data := `{"name": "Jon", "age": 10}`
+var person Person
+err := json.Unmarshal([]byte(data), &person)    // err = nil
+fmt.Printf("%+v", person)   // {Name:Jon Job:}
+```
 
-// We can spesify custom field names
-type Bird struct {
-  Species string `json:"species"`
-  Description string `json:"desc"`
+__Ignore JSON fields when parsing/writing__
+
+```go
+type Person struct {
+  Name string `json:"name"`
+  Age  int    `json:"-"`
 }
-jsonStr == `{"species": "pigeon","desc": "likes to perch on rocks"}`
 
-// Fields can be optional
-type MyStruct struct {
-    Name  string `json:"name"`
-    Email string `json:"email,omitempty"`
+data := `{"name": "Jon", "age": 10}`
+var person Person
+err := json.Unmarshal([]byte(data), &person)    // err = nil
+fmt.Printf("%+v", person)   // {Name:Jon Age:0}
+
+person := Person {Name: "Jon", Age: 10}
+data, err := json.Marshal(person)   // err = nil
+fmt.Println(string(data))           // {"name":"Jon"}
+```
+
+__Leave out empty fields__
+
+```go
+type Person struct {
+  Name string `json:"name,omitempty"`
+  Age  int    `json:"age,omitempty"`
+}
+
+person := Person {Name: "", Age: 0}
+data, err := json.Marshal(person)   // err = nil
+fmt.Println(string(data))           // {}
+```
+
+__Useful snippets__
+
+```go
+// For convenience, we can use a wrapper for Marshal
+func jsonMarshal(v interface{}) string {
+    jsonStr, err := json.Marshal(v)
+    if err != nil {
+        panic(err)
+    }
+    return string(jsonStr)
+}
+
+// MarshalIndent can be used to format the created JSON
+s, err := json.MarshalIndent(person, "", "\t")
+```
+
+_______________________________________________________________________________
+
+# Reflection
+```go
+import "reflect"
+
+// reflect.Type
+// Find type
+varType := reflect.TypeOf(var)
+// Type name
+varType.Name()
+// Type kind (a primitive type: slice, map, struct, pointer, func, etc.)
+varType.Kind()
+// Contained type of a data structure, pointer, channel, etc.
+varType.Elem()
+
+// Call a method by name
+func (fsm *FSM) callAction(fname string, arg string) bool {
+    obj := reflect.ValueOf(fsm)
+    method := obj.MethodByName(fname)
+    // Convert to a function with the right signature
+    mCallable := method.Interface().(func(string) bool)
+    return mCallable(arg)
+}
+
+```
+
+_______________________________________________________________________________
+
+# Testing
+Rules for writing tests:
+- It needs to be in a file with a name like `xxx_test.go`
+- The test function must start with the word `Test`
+- The test function takes one argument only `t *testing.T`
+
+```go
+package main
+
+import "testing"
+
+func TestAbs(t *testing.T) {
+    got := Abs(-1)
+    want = 1
+    if got != want {
+        t.Errorf("Abs(-1) = %d; want %d", got, want)
+    }
+}
+```
+
+## Subtests
+Subtests allow us to group different related tests.
+
+```go
+func TestAbs(t *testing.T) {
+    t.Run("absolute of zero", func(t *testing.T) {
+        got := Abs(0)
+        want = 0
+        if got != want {
+            t.Errorf("got %d; want %d", got, want)
+        }
+    })
+
+    t.Run("absolute of non-zero", func(t *testing.T) {
+        got := Abs(-1)
+        want = 1
+        if got != want {
+            t.Errorf("got %d; want %d", got, want)
+        }
+    })
+}
+```
+
+## Helper Functions
+To reduce repetitive code (like assertions), a helper function can be used.
+
+`t.Helper()` tells the test suit that this function is a helper and therefore the failure line number will be in the test function rather that the helper.
+
+```go
+func TestAbs(t *testing.T) {
+    assertCorrectInt := func(t *testing.T, got, want int) {
+        t.Helper()
+        if got != want {
+            t.Errorf("got %d; want %d", got, want)
+        }
+    }
+
+    t.Run("absolute of zero", func(t *testing.T) {
+        got := Abs(0)
+        want = 0
+        assertCorrectMessage(t, got, want)
+    })
+}
+```
+
+## Examples
+Examples are compiled (and optionally executed) as part of a package's test suite.
+
+An example is executed if it has an output comment. `go test` will fail if the expected output doesn't match the actual one.
+
+```go
+func ExampleAdd() {
+    sum := Add(1, 5)
+    fmt.Println(sum)
+    // Output: 6
+}
+```
+
+## Benchmarks
+The benchmark works by running the tested code `b.N` times.
+
+To run the benchmarks: `go test -bench=.` or `go test -bench="."` in Powershell.
+
+```go
+func BenchmarkAdd(b *testing.B) {
+    for i := 0; i < b.N; i++ {
+        Add(1, 5)
+    }
 }
 ```
 
@@ -973,8 +1302,6 @@ run_func()
 elapsed := time.Since(start)
 log.Printf("Function took %s", elapsed)
 ```
-## To write about
-- HTTP templates: https://golang.org/doc/articles/wiki/
 
 ## Modules
 A module is a collection of related Go packages that are versioned together as a single unit.
@@ -986,4 +1313,21 @@ go mod init <module_name>
 go mod vendor
 # Prune any no-longer-needed dependencies
 go mod tidy
+# List current modules and their dependancies
+go list -m all
 ```
+
+## Helpful Tools
+
+### StaticCheck
+Staticcheck is a static analysis toolset.
+
+```sh
+cd my_project
+go get honnef.co/go/tools/cmd/staticcheck
+# Run `staticcheck` like you run `build`
+staticcheck
+```
+
+## To write about
+- HTTP templates: https://golang.org/doc/articles/wiki/
