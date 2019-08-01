@@ -4,7 +4,9 @@
 - [Language Fundamentals](#language-fundamentals)
     - [Variables](#variables)
     - [Data Types](#data-types)
+        - [Strings](#strings)
         - [Arrays](#arrays)
+        - [Maps](#maps)
     - [Operators](#operators)
     - [Functions](#functions)
         - [Lambdas](#lambdas)
@@ -22,10 +24,14 @@
 - [HTML Manipulation](#html-manipulation)
     - [Adding Elements Dynamically](#adding-elements-dynamically)
     - [Removing Elements Dynamically](#removing-elements-dynamically)
+- [JQuery](#jquery)
+    - [Selectors](#selectors)
+    - [Load](#load)
 - [Useful Snippets](#useful-snippets)
     - [Extract a video and open it in a new tab](#extract-a-video-and-open-it-in-a-new-tab)
     - [Wait for an element to load](#wait-for-an-element-to-load)
     - [Reuse Headers and Footers](#reuse-headers-and-footers)
+    - [Remove all element of a class](#remove-all-element-of-a-class)
 
 <!-- /MarkdownTOC -->
 
@@ -38,6 +44,13 @@
 _______________________________________________________________________________
 ## Data Types
 
+### Strings
+```js
+// Include a variable in a string
+x = 5
+console.log(`#${x}`);
+```
+
 ### Arrays
 ```js
 // Creation
@@ -46,6 +59,38 @@ var color = colors[0];
 // Delete element
 const index = myArr.indexOf("a");
 myArr.splice(index, 1);
+
+/* Functions */
+// Sort
+myArr.sort((a, b) => a - b);
+// Map: Call a function on each element, and return an array that contains the results.
+myArr.map((v) => v.toString());
+```
+
+### Maps
+```js
+let m = new Map();
+
+// Get and Set values
+m.set("name", "Joe");
+m.get("name");   // "Joe"
+m.get("age");    // undefined
+
+// Check if value exists
+let age = m.get("age");
+if (!age)
+    m.set("age", 15);
+
+// Iterate over map keys/values
+myMap.forEach(value => console.log(value));
+myMap.forEach((value, key) => console.log(key, value));
+
+// Array of keys
+Array.from(myMap.keys());
+// Array of values
+Array.from(myMap.values());
+// Array of key/value pairs
+Array.from(myMap.entries());
 ```
 
 _______________________________________________________________________________
@@ -205,6 +250,52 @@ function removeElement(elementId) {
 ```
 
 _______________________________________________________________________________
+# JQuery
+
+## Selectors
+
+```js
+/*** Selectors ***/
+//All elements
+$("*")  
+// The element with id="lastname"
+$("#lastname")
+// All elements with class="intro"
+$(".intro")
+// All elements with the class "intro" or "demo"
+$(".intro,.demo")
+// All <p> elements
+$("p")
+// All <h1>, <div> and <p> elements
+$("h1,div,p");
+```
+
+```js
+// Add class
+$( "p" ).addClass( "class1 class2" );
+
+// Get attribute value
+$('#A').attr('myattr')
+// Check if attribute exists and not empty
+if ($('#A').attr('myattr')){}
+// Check if attribute exists
+if ($('#A').attr('myattr') !== undefined){}
+
+```
+
+## Load
+Load an html page as to an element with an optional callback to be called when loading is done.
+
+```js
+.load( url [, data ] [, complete ] )
+
+$( "#result" ).load( "ajax/test.html" );
+$( "#result" ).load( "ajax/test.html", function() {
+  alert( "Load was performed." );
+});
+```
+
+_______________________________________________________________________________
 # Useful Snippets
 
 ## Extract a video and open it in a new tab
@@ -269,3 +360,7 @@ To do it in plain JS without JQuery see <https://www.w3schools.com/w3js/w3js_htm
 
 It is possible to utilize a similar technique to use `#filename` in the URL for specifying the page to get the content from. This is explained here: <https://css-tricks.com/dynamic-page-replacing-content/>
 
+## Remove all element of a class
+```js
+$(".limit").each(function(){$(this).removeClass("limit")});
+```
