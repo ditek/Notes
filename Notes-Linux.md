@@ -152,7 +152,9 @@ echo 'text' | sudo tee -a /file.txt > /dev/null
 ```
 
 ## Searching
-Grep
+
+### Grep
+
 - Used to find a string inside files and returns the line of occurrence:
     $ grep -r word      => look for word recursively in all files in the current directory
     $ grep foo bar.txt  => look for foo in bar.txt
@@ -161,7 +163,24 @@ Grep
 - To grep a special character add '$' before it 
     $ grep $'\t' bar.txt
 
-Locate
+### Silver Searcher
+
+10x faster than grep for searching for a word within files in a directory.
+
+```sh
+sudo apt install silversearcher-ag
+# Basic search - list all results
+ag <word> <directory>
+# List each matching file and number of matches
+ag --count <word> <directory>
+# Create an ".ignore" with directories to ignore
+echo "test" > ~/express/.ignore
+# Ignore certain extensions
+ag --ignore *.md <word> <directory>
+```
+
+### Locate
+
 - Search a pre-built database for files and folders names containing a word then filter for the results that include word2:
     $ locate word | grep word2
     $ locate zip | grep bin
@@ -169,12 +188,17 @@ Locate
 - Update the search database manually:
     $ updatedb
 
-LS with wildcards
-- Usable wildcards: ?, *, [set], [!set]
-    $ ls ba[tlr]    => returns bat, bal or bar
-    $ ls ba[!a-s]   => accepts letters outside a-s range
+### LS with wildcards
 
-Find
+- Usable wildcards: `?, *, [set], [!set]`
+
+```sh
+ls ba[tlr]    # returns bat, bal or bar
+ls ba[!a-s]   # accepts letters outside a-s range
+```
+
+### Find
+
 - Find files in specific dir with specific conditions.
     $ find <directories> <arguments>
 - Available 'find' arguments:
@@ -371,6 +395,11 @@ sudo route add default gw <IP> <interface>
 sudo route delete default
 # To delete a specific default
 sudo route delete default gw <IP> <interface>
+route del 10.120.100.0 eth0
+
+# To modify a route, you have to delete it and add it again
+ip route del 172.31.1.0/24 via 30.1.2.2
+ip route add 172.31.1.0/24 via 172.31.1.69 metric 0
 ```
 
 ## Configure WiFi
@@ -520,6 +549,56 @@ openvpn3 session-manage --config ${CONFIGURATION_PROFILE_NAME} --restart
 openvpn3 session-manage --config ${CONFIGURATION_PROFILE_NAME} --disconnect
 ```
 
+## Wireguard
+
+### Windows
+
+#### Server Setup
+Add an empty tunnel. Private and public keys will be auto-generated. Add the server address and an optional port (default is 51820)
+```sh
+[Interface]
+Address = 10.254.0.1/24
+ListenPort = 49312
+```
+
+#### Adding clients to the server
+First, generate the client keys. In command prompt:
+
+```sh
+wg genkey > client.key
+type client.key | wg pubkey > client.pub
+wg genpsk > client.psk
+```
+
+Create a file `client.conf` with the following info.
+
+```sh
+[Interface]
+# From client.key
+PrivateKey = xxx
+# Client address
+Address = 10.254.0.2/32
+
+[Peer]
+# Public IP of the server
+Endpoint = 10.6.66.76:49312
+AllowedIPs = 0.0.0.0/0, ::/0
+# From the server config
+PublicKey = yyy
+# From client.psk
+PresharedKey = zzz
+```
+
+Add the client info to the server config file.
+
+```sh
+[Peer]
+AllowedIPs = 0.0.0.0/0, ::/0
+# From client.pub
+PublicKey = 
+# From client.psk
+PresharedKey = 
+```
 _______________________________________________________________________________
 # Date and time
 Set date from the command line
@@ -552,9 +631,15 @@ _______________________________________________________________________________
 
 # Compression
 
+_Note_: On Mac use `gtar` (`brew install gnu-tar`). 
+
 ```sh
+# Compress
 tar -czvf <output_file> <target_to_compress>
 tar -czvf projects.tar.gz $HOME/projects/
+
+# View oontents
+tar -tf file.tgz
 ```
 
 ```
@@ -574,21 +659,69 @@ _______________________________________________________________________________
 - Run vim command (that starts with ':') from command line
     $ vim <file> -c <cmd>
     $ vim foo.cpp -c wq
-- Commands
-    vib/vi(, viB/vi{, vi[, vi', vi"     select text inside the specified marker
-    The a variants (vax) includes the surrounding markers, e.g. quote marks.
-    h, j, k, l                  => left, down, up, right
-    w/W                 jump to the next word/big word
+- Options
+    Options are set with `:set <option>` and disabled with `:set no<option>`.
+
+    number             Show line number
+    ic, ignorecase     ignore case for search
+    hls, hlsearch           highlight search matches
+
+```
+Motions
+    h, j, k, l      move left, down, up, right
+    w/W             jump to the start of next word/big word
+    e/E             jump to the end of next word/big word
+    $               end of line
+    gg              start of file
+    G               end of file
+    CTRL+g          line information
+    <num>gg/G       jump to line
+    CTRL+o          previous cursor location
+    CTRL+i          next cursor location
+    %( %[ %{        jump to matching parentheses
+
+Commands
+    i                   enter insert mode at current character
+    I                   enter insert mode at start of line
+    a                   enter insert mode at next character
+    A                   enter insert mode at end of line
+    R                   enter replace mode
+    vi<marker>          select text inside the specified marker
+        vib/vi(, viB/vi{, vi[, vi', vi"
+    va<marker>          same as `vi` but includes the marker
     y<mod>              yank (copy) y-line w-word 
     d<mod>              delete (cut) d-line w-word 3down-delete 3 lines down
     p                   put (paste)
     r<char>             replace the chatacter under courser with char
     u                   undo
     ctrl+r              redo
+    c<mod>              change
+        ce              delete until the end of the word, start insert mode
+        cc              delete the whole line, start insert mode
+        c<delete motions>
+    o                   open a new line bellow and enter insert mode
+    O                   open a new line above and enter insert mode
+
+```
+- Tab
+    If you're in insert mode:
+        Ctrl+d - shift left
+        Ctrl+t - shift right
+    If you're in normal mode:
+        Shift+<< - shift current line left
+        Shift+>> - shift current line right
+    If you're in visual mode and have 1 or more lines selected:
+        '<' - shift selection left
+        '>' + shift selection right
+
 - Search
-    *                   Search for the word under cursor
-    /foo                Search for 'foo'
-    n                   Jump to next search result
+    *                   search for the word under cursor
+    /foo                search for 'foo'
+    ?foo                search in the backward direction
+    n                   next search result
+    N                   previous search result
+    <phrase>/ignore\c   ignore case
+
 - Search and replace    (http://vim.wikia.com/wiki/Search_and_replace)
     :s/foo/bar/g        Change each 'foo' to 'bar' in the current line.
     :%s/foo/bar/g       Change each 'foo' to 'bar' in all the lines.
@@ -598,6 +731,78 @@ _______________________________________________________________________________
     :.,+2s/foo/bar/g    Change each 'foo' to 'bar' for the current line (.) and the next 2 lines (+2).
     :%s//bar/g          Replace each match of the last search pattern with 'bar'.
 
+## Packages
+### Setup Vundle
+```sh
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+```
+
+```vim
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+" Plugins go here
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+```
+
+After adding your plugins in `.vimrc` run `:PluginInstall`.
+
+### Useful Plugins
+
+```sh
+# Powerline
+Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+# Install
+sudo apt install powerline
+
+# Syntax highlighting and linting (slow on Pi)
+Plugin 'dense-analysis/ale'
+```
+
+## NeoVim
+```sh
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+chmod u+x nvim.appimage
+./nvim.appimage
+# If the ./nvim.appimage command fails, try:
+./nvim.appimage --appimage-extract
+./squashfs-root/AppRun --version
+
+sudo cp ./nvim.appimage /usr/local/bin/nvim
+sudo chmod 755 /usr/local/bin/nvim
+```
+
+## VS Code Plugin
+Use default behaviour for keybindings.
+
+```json
+"vim.handleKeys": {
+    "<C-p>": false,
+}
+```
 _______________________________________________________________________________
 # scp
 - Copy the file "foobar.txt" from a remote host to the local host
@@ -618,7 +823,7 @@ sudo service ssh start
 Generate your ssh-rsa key using an email as a label:
 
 ```sh
-ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+ssh-keygen -t rsa -b 4096 -C "cusom_label"
 ```
 
 ## Authorized Keys
@@ -641,7 +846,7 @@ ssh -fNL 1883:127.0.0.1:1883 fh@192.168.1.111
 
 ```
 
-## Port Forwarding Config File
+## Port Forwarding and Config File
 Add the following in `~/.ssh/config`
 
 ```sh
@@ -946,7 +1151,7 @@ done
     done
 - 'do..until' is used by replacing 'while' with 'until'
 - Example:
-    count=$1                        # Initialise count to first parameter 
+    count=$1                        # Initialize count to first parameter 
     while [ $count -gt 0 ]          # while count is greater than 10 do
     do
        echo $count seconds left
@@ -1122,7 +1327,9 @@ foo := $(shell git describe --tags | cut -c 1-6)
 ```
 
 _______________________________________________________________________________
-# Curl
+# Tools
+
+## Curl
 
 Queries
 
@@ -1136,10 +1343,81 @@ curl -X POST "http://20.20.20.232/api/tests" \
     --cookie "PHPSESSID=3ee7b66e5e3b8d5c6892f67cd41589ab"
 ```
 
+## Meg
+Fetch many paths for many hosts - without killing the hosts.
+
+```sh
+# paths.txt
+/api/docs
+/api/swagger
+
+# hosts.txt
+https://www.site1.com
+https://www.site2.com
+
+# Command
+# Verbose with 1000ms delay between calls to the same host
+meg -v -d 1000 paths.txt hosts.txt meg_output
+```
+
+## Sed (Linux Stream Editor)
+By default, the command result is printed to stdout.
+If `-i` is used, the file is edited in-place instead.
+
+The following commands exist:
+- s: substitute
+- d: delete
+- i: insert before
+- a: append after
+
+```sh
+# Replace the first x of each line with y
+sed 's/x/y/' file.txt
+# Replace all instances of x with y
+sed 's/x/y/g' file.txt
+# Replace nth occurance
+sed 's/x/y/3' file.txt
+# Replace all occurances from the nth occurance
+sed 's/x/y/3g' file.txt
+
+# Delete matching line
+sed '/x/d'
+# Delete blank Lines  
+sed '/^$/d' file.txt
+```
+
+## Youtube Downloader
+https://github.com/yt-dlp/yt-dlp
+
+```sh
+yt-dlp -P <output-path> <url>
+```
+
+## Protoscope and Protocol Buffers
+```sh
+# Decode a binary dump
+protoscope raw.bin
+
+# Decode hexdata from a file
+$ cat hexdata.txt
+0a400a26747970652e676f6f676c65617069732e636f6d2f70726f746f332e546573744d65737361676512161005420e65787065637465645f76616c756500000000
+$ xxd -r -p hexdata.txt | protoscope
+
+# Decode hexdata from input
+$ xxd -r -p <<< "1005420e65787065637465645f76616c756500000000" | protoscope
+```
+
+## XXD hex conversion
+```sh
+# Options:
+# -p - plain hex string (by default uses a human readable format)
+# -r - revert: hex to binary
+
+# Binary to hex
+xxd [options] file.bin
+```
 _______________________________________________________________________________
-/********************************************************/
-/*********************** Serial *************************/
-/********************************************************/
+# Serial and Screen
 
 ```sh
 # Determine baud rate
@@ -1150,6 +1428,48 @@ screen /dev/ttyS0 115200
 
 # Exit screen
 ctrl+(a \)
+
+# Detach screen
+ctrl+(ad)
+
+# Reattach a detached screen
+screen -rd
+
+# Run with output logging (will save to screenlog.0 by default)
+screen -L [-Logfile file] cmd
+
+# Detach and run as daemon
+screen -dmS name
+rm screenlog.0 && screen -L -dmS simcom sudo SIM8200-M2_5G_HAT_code/Goonline/simcom-cm && sleep 2 && tail -f screenlog.0
+```
+
+_______________________________________________________________________________
+# Cron
+Use `crontab -e` to open the cron config file.
+
+```sh
+# Job definition format:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  *  command
+
+# Run every day at 1:00
+00 01 * * mon-fri /usr/local/bin/rsbu -vbd1
+# Run every three months
+30 15 1 1,4,7,10 * /usr/local/bin/reports.sh
+# Run every hour at xx:01 between 9-17 inclusive
+01 09-17 * * * /usr/local/bin/hourlyreminder.sh
+# Multiple ranges
+0 0-8,17-23 * * * script.sh
+# */x can be used to run every x, i.e. when time is divisible by x.
+# Run every 5 min, every 2 hours between 8 and 18
+*/5 08-18/2 * * * /usr/local/bin/mycronjob.sh
+
+59 */3 * * * /home/pi/git/ProfileViewer/profile_viewer_kivy/venv_bot/bin/python3 /home/pi/git/ProfileViewer/profile_viewer_kivy/bot_filter_notifier.py > /home/pi/bot_filter_notifier.log 2>&1
 ```
 
 _______________________________________________________________________________
@@ -1174,12 +1494,284 @@ diskutil list
 # On Linux
 sudo fdisk -l
 # Create and compress the image
-sudo dd bs=4M if=/dev/disk2 | gzip > PiOS.img.gz
+sudo dd bs=4M if=/dev/disk2 status=progress | gzip > PiOS.img.gz
+# Without compression
+sudo dd bs=4M if=/dev/disk2 of=./PiOS.img conv=noerror status=progress
 
 # Restore a compressed image
 # On MacOS, you need to unmount the disk first
 sudo diskutil unmountDisk disk2
-gunzip --stdout PiOS.img.gz | sudo dd bs=4M of=/dev/disk2
+gunzip --stdout PiOS.img.gz | sudo dd bs=4M of=/dev/disk2 status=progress
+```
+
+## Java for RPi
+Get it from https://bell-sw.com/pages/downloads/
+
+_______________________________________________________________________________
+# Home Server
+
+## Docker
+```sh
+url -sSL https://get.docker.com | sh
+# Add current user to docker group
+sudo usermod -aG docker ${USER}
+# Enable service
+sudo systemctl enable docker
+# The group change takes effect after logout (or reboot)
+sudo reboot
+# Test
+docker run hello-world
+```
+
+## Portainer
+Container management GUI. Use port `9000` for HTTP and `9433` for HTTPS.
+
+```sh
+docker run -d -p 9000:9000 -p 9443:9443 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+```
+
+To get more Protainer container templates, copy the `Protainer v2 (no OMV)` template URL from https://github.com/SelfhostedPro/selfhosted_templates and paste it to Portainers Settings -> App Templates.
+A list of Pi OS ARM32 compatible apps is available at https://github.com/novaspirit/pi-hosted.
+
+To get the container links to work, set the right IP at Environments -> local.
+
+## Homer
+Dashboard for server apps.
+
+```sh
+docker run -d -p 8080:8080 --name=homer -v </directory/to/store/assets>:/www/assets --restart=always b4bz/homer:latest
+```
+
+Modify the config file that is created in the asset directory. When using Portainer, that would be `/portainer/Files/AppData/Config/Homer/assets/config.yml`.
+Section icons: https://fontawesome.com/v5/search
+Application icons: https://github.com/walkxcode/dashboard-icons
+
+## ShellInABox
+SSH via the browser.
+Accessed via port 4200 on HTTPS.
+
+```sh
+sudo apt install shellinabox
+```
+
+## Nginx Proxy Manager
+To install, follow the instructions in the Portainer template.
+
+## Nextcloud
+```yaml
+version: '2'
+
+volumes:
+  nextcloud:
+  db:
+
+services:
+  db:
+    image: yobasystems/alpine-mariadb:latest
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+    volumes:
+      - /mnt/hdd/nextcloud/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_PASSWORD=dbpassword
+      - MYSQL_DATABASE=nextcloud_db
+      - MYSQL_USER=nextcloud
+
+  app:
+    image: linuxserver/nextcloud:latest
+    ports:
+      - 8090:80
+    links:
+      - db
+    volumes:
+      - /mnt/hdd/nextcloud/html:/var/www/html
+      - /mnt/hdd/nextcloud/conf.d:/usr/local/etc/php/conf.d
+    restart: always
+
+version: '2'
+
+volumes:
+  nextcloud:
+  db:
+
+services:
+  db:
+    image: yobasystems/alpine-mariadb:latest
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+    volumes:
+      - /portainer/Files/AppData/Config/nextcloud/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_PASSWORD=dbpassword
+      - MYSQL_DATABASE=nextcloud_db
+      - MYSQL_USER=nextcloud
+
+  app:
+    image: linuxserver/nextcloud:latest
+    ports:
+      - 8090:80
+    links:
+      - db
+    volumes:
+      - /portainer/Files/AppData/Config/nextcloud/html:/var/www/html
+      - /portainer/Files/AppData/Config/nextcloud/conf.d:/usr/local/etc/php/conf.d
+    restart: always
+```
+CREATE DATABASE nextcloud_db;
+CREATE USER 'nextcloud'@'localhost' IDENTIFIED BY 'dbpassword';
+GRANT ALL ON nextcloud_db .* TO 'nextcloud'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+
+## Pihole
+On Raspberry Pi OS Bullseye, the Pihole docker may fail to start giving the following message:
+
+```sh
+Error response from daemon: driver failed programming external connectivity on endpoint pihole (...):
+Error starting userland proxy: listen tcp4 0.0.0.0:53: bind: address already in use
+Error: failed to start containers: 726d9b085815
+```
+
+To find which application is using port 53:
+
+```sh
+sudo netstat -antupl | grep :53
+```
+If it's `connmand` (the network manager) do the following.
+
+Create `/etc/systemd/system/connman.service.d/disable_dns_proxy.conf`:
+
+```sh
+[Service]
+ExecStart=
+ExecStart=/usr/sbin/connmand -n --nodnsproxy
+```
+
+Then run:
+
+```sh
+sudo systemctl daemon-reload
+sudo systemctl restart connman.service
+```
+
+This will disable the connmand DNS proxy.
+Source: https://wiki.archlinux.org/title/ConnMan#Avoiding_conflicts_with_local_DNS_server
+
+
+## Dynamic DNS
+In Google Domains:
+- Select domain -> DNS -> Dynamic DNS -> Manage -> Create new record -> Enter subdomain.
+- Click "View credentials" on the newly created record and copy the credentials.
+
+Install ddclient on the Pi.
+
+```sh
+sudo apt install ddclient
+```
+
+ddclient config:
+- Select "Web-based IP discovery service".
+- 
+
+dpkg-reconfigure ddclient
+or
+vim /etc/ddclient.conf
+
+Option 1: googledomains native protocol
+
+```sh
+ssl=yes
+protocol=googledomains
+login='generated_username'
+password='generated_password'
+your_resource.your_domain.tld
+```
+
+Option 2: dyndns2 protocol
+
+```sh
+protocol=dyndns2
+use=web
+server=domains.google.com
+ssl=yes
+login='generated_usernam'
+epassword='generated_password'
+your_resource.your_domain.tld
+```
+
+Restart the service
+
+```sh
+sudo service ddclient restart
+```
+_______________________________________________________________________________
+# Using NTFS Disks
+https://askubuntu.com/questions/11840/how-do-i-use-chmod-on-an-ntfs-or-fat32-partition/887502#887502
+
+To allow setting permissions for NTFS disks, `ntfs-3g` is needed.
+
+1. Install `ntfs-3g` from package manager.
+2. Unmount the disk.
+    ```sh
+    sudo umount /mnt/hdd
+    ```
+3. Generate `UserMapping` file and place it on the disk after remounting.
+    ```sh
+    sudo ntfsusermap /dev/sda1
+    sudo mount /dev/sda1 /mnt/hdd
+    mkdir /mnt/hdd/.NTFS-3G
+    mv UserMapping /mnt/hdd/.NTFS-3G
+    ```
+4. Update `fstab` (back up the old config).
+    ```sh
+    # nofail is very important as it allows the pi to still boot if the disk is not present
+    UUID=34A0456DA04536A0 /mnt/windows ntfs-3g defaults,nofail 0 0
+    ```
+5. Unmount and try if the new setting works by mounting using `mount -a`.
+
+_______________________________________________________________________________
+# Software
+
+## Virtual Box
+To enable clipboard:
+
+```sh
+sudo apt install virtualbox-guest-x11
+# Run this and add it to .bashrc
+sudo VBoxClient --clipboard
+# Also set clipboard sharing in settings
+```
+
+## ROS2
+Only LTS releases of Ubuntu are supported.
+
+```sh
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+sudo apt install curl -y
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+sudo apt update && sudo apt upgrade
+sudo apt install ros-humble-desktop
+sudo apt install ros-humble-xacro
+
+# Update `.bashrc`
+source /opt/ros/humble/setup.bash
+```
+
+Gazebo
+
+```sh
+sudo apt-get install lsb-release wget gnupg
+sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+sudo apt-get update
+sudo apt-get install ignition-fortress
+
+sudo apt-get install ros-${ROS_DISTRO}-ros-gz
+sudo apt-get install ros-$ROS_DISTRO-rviz
 ```
 
 _______________________________________________________________________________
