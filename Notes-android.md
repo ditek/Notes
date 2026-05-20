@@ -16,7 +16,7 @@
     - [Activities](#activities)
         - [Launch Mode](#launch-mode)
         - [Providing Up Navigation](#providing-up-navigation)
-    - [Fragments:](#fragments)
+    - [Fragments](#fragments)
     - [Services](#services)
         - [Types of services](#types-of-services)
         - [Service class:](#service-class)
@@ -39,8 +39,7 @@
     - [Context](#context)
     - [Android Version](#android-version)
 - [Views](#views)
-    - [AdapterView](#adapterview)
-        - [ListView](#listview)
+    - [ListView](#listview)
     - [RecyclerView](#recyclerview)
         - [How it works:](#how-it-works)
         - [How it works - functional steps:](#how-it-works---functional-steps)
@@ -98,7 +97,17 @@
         - [Setup](#setup-1)
         - [Usage](#usage-2)
         - [Public methods:](#public-methods)
-    - [Floating Action Button](#floating-action-button)
+    - [Floating Action Button \(FAB\)](#floating-action-button-fab)
+    - [Architecture Components](#architecture-components)
+        - [Navigation Drawer](#navigation-drawer)
+            - [Usage](#usage-3)
+            - [Extra](#extra)
+    - [Custom View](#custom-view)
+        - [Drawing](#drawing)
+    - [SurfaceView](#surfaceview)
+        - [Drawing](#drawing-1)
+        - [Drawing in a thread](#drawing-in-a-thread)
+        - [Making it transparent](#making-it-transparent)
 - [UI Components in Java](#ui-components-in-java)
     - [Instantiating a view](#instantiating-a-view)
         - [New Views](#new-views)
@@ -118,6 +127,7 @@
     - [Passing Objects Through Intents](#passing-objects-through-intents)
         - [Serialization](#serialization)
         - [Parcelable](#parcelable)
+            - [Parceler library](#parceler-library)
     - [Extras](#extras)
 - [URI](#uri)
     - [URI format:](#uri-format)
@@ -136,6 +146,7 @@
 - [HTTP Connections](#http-connections)
     - [Manually](#manually)
     - [OkHttp](#okhttp)
+        - [Websocket](#websocket)
 - [Scanner](#scanner)
 - [Permissions](#permissions)
 - [JSON](#json)
@@ -147,7 +158,7 @@
     - [AsyncTask](#asynctask)
     - [Loaders](#loaders)
         - [Classes and interfaces](#classes-and-interfaces)
-        - [_LoaderManager_ Methods](#_loadermanager_-methods)
+        - [_LoaderManager_ Methods](#loadermanager-methods)
     - [AsyncTaskLoader](#asynctaskloader)
         - [Methods](#methods)
         - [Example](#example-1)
@@ -162,6 +173,8 @@
         - [Getting Preference Values](#getting-preference-values)
         - [Editing Preference Values](#editing-preference-values)
         - [Set up Preference Change Listener](#set-up-preference-change-listener)
+            - [PreferenceChangeListener](#preferencechangelistener)
+            - [SharedPreferenceChangeListener](#sharedpreferencechangelistener)
         - [Bind Preference Summary to the Preference Value:](#bind-preference-summary-to-the-preference-value)
     - [ListPreference](#listpreference)
 - [Notifications](#notifications)
@@ -186,18 +199,26 @@
         - [SQL Database Operations](#sql-database-operations)
         - [Reading/Writing Databases](#readingwriting-databases)
         - [Integrating with a RecyclerView](#integrating-with-a-recyclerview)
+- [Using Device Resources](#using-device-resources)
+    - [MediaRecorder](#mediarecorder)
+    - [AudioRecorder](#audiorecorder)
+    - [AudioTrack](#audiotrack)
+    - [Storage Access](#storage-access)
+        - [Create an SD card directory](#create-an-sd-card-directory)
 - [Testing](#testing)
     - [Instrumented Tests](#instrumented-tests)
         - [Dependencies](#dependencies)
-        - [Usage](#usage-3)
+        - [Usage](#usage-4)
         - [Testing Intents](#testing-intents)
         - [Matchers](#matchers)
         - [Actions](#actions)
         - [Test Example](#test-example)
+- [Publishing the App](#publishing-the-app)
+    - [Adaptive Launcher Icon](#adaptive-launcher-icon)
 - [Libraries and Tools](#libraries-and-tools)
     - [ButterKnife](#butterknife)
         - [Dependencies](#dependencies-1)
-        - [Usage](#usage-4)
+        - [Usage](#usage-5)
         - [RESOURCE BINDING](#resource-binding)
         - [NON-ACTIVITY BINDING](#non-activity-binding)
         - [LISTENER BINDING](#listener-binding)
@@ -209,17 +230,18 @@
         - [Deserializing JSON arrays](#deserializing-json-arrays)
     - [MP Android Chart](#mp-android-chart)
         - [Dependencies](#dependencies-4)
-        - [Usage](#usage-5)
+        - [Usage](#usage-6)
     - [Guava \(CSV Parsing and String Utilites\)](#guava-csv-parsing-and-string-utilites)
         - [Dependencies](#dependencies-5)
         - [String Splitting and CSV Parsing](#string-splitting-and-csv-parsing)
         - [String operations](#string-operations)
     - [Annotations Library](#annotations-library)
         - [Dependencies](#dependencies-6)
-        - [Usage](#usage-6)
+        - [Usage](#usage-7)
     - [Schematics \(Help with Content Providers\)](#schematics-help-with-content-providers)
     - [Volly \(Networking\)](#volly-networking)
     - [Android-SwitchIcon \(Switch icon with animation\)](#android-switchicon-switch-icon-with-animation)
+    - [EasyPermissions](#easypermissions)
 - [Widgets](#widgets)
     - [Widget Components](#widget-components)
     - [Add to the Manifest](#add-to-the-manifest)
@@ -521,7 +543,9 @@ public boolean onOptionsItemSelected(MenuItem item) {
 }
 ```
 
-## Fragments:
+## Fragments
+**Note** Always use support library fragments.
+
 - A Fragment represents a portion of UI in an Activity.
 - An activity can have a single fragment (as in phones) or can combine multiple fragments to build a multi-pane UI.
 - A fragment can be reused in multiple activities.
@@ -532,6 +556,7 @@ public boolean onOptionsItemSelected(MenuItem item) {
 - Use rootView instead of getActivity() to find items the parent activity:  
   `TextView txtForecast = (TextView) rootView.findViewById(R.id.txt_forecast);`
 - When the host activity is created, both it, and the fragments it contains, call their `onCreate()` methods. Then, right after this creation, fragments call their `` method to inflate their view dynamically!
+- You should inflate your layout in `onCreateView` but shouldn't initialize other views using `findViewById` in `onCreateView`. Initialize them in `onViewCreated()` instead.
 
 __Getting Fragment Instance in Parent Activity__
 
@@ -566,6 +591,61 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle sa
     return super.onCreateView(inflater, container, savedInstanceState);
 }
 ```
+
+### Convert activity to fragment
+
+1. Change class type.
+
+original: `public class MyActivityClass extends AppCompatActivity`
+converted: `public class MyFragmentClass extends Fragment`
+
+2. Create factory method and add all the values that you get from `getIntent().getExtra()` as parameters for the method
+
+original: `String name=getIntent.getExtras().getString("name");`
+
+converted:
+
+This
+
+```java
+public static MyFragmentClass newInstance(String name){
+    MyFragmentClass fragment = new MyActivity();
+    Bundle args = new Bundle();
+    args.putString(KEY_NAME, name);
+    fragment.setArguments(args);
+    return fragment;
+}
+```
+
+and this,
+
+```java
+@Override
+public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    if (getArguments() != null) {
+        name = getArguments().getString(KEY_NAME);
+    }
+}
+```
+
+3. override method onCreateView() and inflate your layout
+
+original: `setContentView(R.layout.activity_layout);`
+
+converted:
+
+```java
+@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_layout, container, false);
+    }
+```
+
+4. place all the `findViewById(...);` statement in `onViewCreated()` and rename to `view.findViewById(...)` and other code which does not need the activity to run.
+
+5. override `onActivityCreated()` and place all the code that needs Activty in here.
 
 ## Services
 - A Service is a component that performs operations in the background without a user interface.
@@ -1123,6 +1203,7 @@ ________________________________________________________________________________
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        // To put a custom object, it needs to implent Parcelable
         outState.putString(STATE_KEY, mTextView.getText().toString());
     }
 ```
@@ -1159,9 +1240,9 @@ Common methods:
 - `setTag(Object tag)`: Sets the tag associated with this view. Can be used to store view related data.
 - `setTag(int key, Object tag)`: Sets a tag associated with this view and a key.
 
-## AdapterView
-### ListView
-- **Note** ListView is deprecated and replaced with RecyclerView
+## ListView
+**Note** ListView is deprecated and replaced with RecyclerView
+
 - ListView is a subclass of AdapterView optimized for displaying lists by displaying many copies of a single layout
 - An Adapter is used to populate a ListView.
 - Functions:
@@ -1755,7 +1836,7 @@ Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.my_icon);
 
 ________________________________________________________________________________________________
 # Java Views and XML Layouts
-- To turn an xml layout into java view objects, we need to inflate the layout. After the layout is inflated, we need to associate it with an Activity or Fragment. This process of inflating and associating is a little different depending on whether it’s a layout for an Activity or Fragment.
+To turn an xml layout into java view objects, we need to inflate the layout. After the layout is inflated, we need to associate it with an Activity or Fragment. This process of inflating and associating is a little different depending on whether it’s a layout for an Activity or Fragment.
 
 **For an Activity**
 - We inflate the layout and associate it with the Activity by calling the setContentView method in onCreate in our Activity:  
@@ -2056,7 +2137,7 @@ The colors `colorPrimary`, `colorPrimaryDark`, `colorAccent` are the default app
 </resources>
 ```
 Resources:
-- [Google vibrant color palettes](https://material.google.com/style/color.html#color-color-palette).
+- [Tools for picking colors](https://material.io/design/color/#tools-for-picking-colors).
 - [Primary and accent color palette generator](https://www.materialpalette.com/).
 
 
@@ -2174,8 +2255,8 @@ Level lists provide different drawables based on a numerical value. Setting the 
 ## Splash Screen
 First create an XML drawable: `res/drawable/background_splash.xml`.
 
-*Note: Make sure the bitmap source isn't a vector drawable
-*
+*Note: Make sure the bitmap source isn't a vector drawable*
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
@@ -2481,7 +2562,7 @@ public void switchState();
 public void switchState(boolean animate);
 ```
 
-## Floating Action Button
+## Floating Action Button (FAB)
 Usage:
 (Use `layout_anchor` to position FAB between two views)
 
@@ -2501,6 +2582,220 @@ Usage:
 ```java
 floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_full_sad));
 ```
+
+## Architecture Components
+
+### Navigation Drawer
+
+#### Usage
+
+__Add to XML__
+
+1. Add `DrawerLayout` as the root layout.
+2. Place your content layouts as children of the `DrawerLayout`.
+3. Add a `NavigationLayout` as the last child.
+
+```xml
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:id="@+id/sheet_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" />
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/sheet_menu"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>
+```
+
+__Handle Click Events__
+
+```java
+navigationView.setNavigationItemSelectedListener(menuItem -> {
+    switch (menuItem.getItemId()) {
+        case R.id.settings:
+            changeSettings();
+            break;
+    }
+    menuItem.setChecked(true);
+    drawerLayout.closeDrawers();
+    return true;
+});
+```
+
+#### Extra
+
+__Listen to Open and Close Events__
+If you want certain behavior when opening/closing the drawer, implement `onDrawerOpened` and `onDrawerClosed` from `DrawerLayout.DrawerListener` interface
+
+```java
+DrawerLayout.SimpleDrawerListener listener = new DrawerLayout.SimpleDrawerListener() {
+    @Override
+    public void onDrawerOpened(View drawerView, float slideOffset) {
+        super.onDrawerOpened(drawerView, slideOffset);
+    }
+};
+drawerLayout.addDrawerListener(listener);
+```
+
+__Add Hamburger Button__
+
+An easy way to add a hamburger button to open the draw is to use a `ActionBarDrawerToggle`. It has two constructors so it can be added to the ActionBar or to a Toolbar. 
+
+```java
+ActionBarDrawerToggle mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open_drawer, R.string.close_drawer){
+    // Override DrawerLayout.DrawerListener methods
+};
+mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
+```
+
+__Disable swipe to open__
+
+```java
+mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+```
+
+________________________________________________________________________________________________
+## Custom View
+
+### Drawing
+To draw on a custom view, we need to override `onDraw` and use the passed canvas. That canvas is, however, is not persistent between calls, so we need to redraw the whole everything on every call or have a buffer bitmap and canvas where we draw to a bitmap and then draw the bitmap to the canvas.
+
+To trigger `onDraw` you can call `invalidate()` in the UI thread or `postInvalidate()` in a non-UI thread.
+
+```java
+class A extends View {
+
+    private Canvas canvas;
+    private Bitmap bitmap;
+
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        if (bitmap != null) {
+            bitmap .recycle();
+        }
+        canvas= new Canvas();
+        bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        canvas.setBitmap(bitmap);
+    }
+    public void destroy() {
+        if (bitmap != null) {
+            bitmap.recycle();
+        }
+    }
+    public void onDraw(Canvas c) {
+      //draw onto the canvas if needed (maybe only the parts of animation that changed)
+      canvas.drawRect(0,0,10,10,paint);
+
+      //draw the bitmap to the real canvas c
+      c.drawBitmap(bitmap, 
+          new Rect(0,0,bitmap.getWidth(),bitmap.getHeight()), 
+          new Rect(0,0,bitmap.getWidth(),bitmap.getHeight()), null);
+    }
+}
+```
+
+## SurfaceView
+SurfaceViews have two parts, the Surface and the View. The View part works like it does in any other member of the View class, obeying the usual invalidate / redraw sequence. Normally, the SurfaceView's View is a transparent hole that is used by the layout code to leave gap for the Surface to show through.
+
+The Surface is a completely separate layer, which by default sits behind the View layer, but can be configured to be on top. It ignores invalidate / refresh, updating whenever you unlock it. Because there's no interaction with the View UI, you can update the Surface from a dedicated renderer thread.
+
+Canvas rendering onto a SurfaceView Surface is not hardware-accelerated, but Canvas drawing on a custom View is. Depending on your device and how many pixels you're touching it may be faster to use a custom View.
+
+### Drawing
+We obtain a canvas by calling `holder.lockCanvas()` and release it by calling `holder.unlockCanvasAndPost(canvas)`, then the surface buffer is pushed to the screen and `onDraw` is called. However, the obtained canvas is not persistent, and we need to either redraw the picture from scratch or use a `bitmap` as a buffer.
+
+`onDraw` does not need to be overridden as in a regular `View`, as it's called internally to draw the canvas when `unlockCanvasAndPost` is called.
+
+```java
+private void paintDot(float x, float y) {
+    if (mBitmap == null) return;  // not ready yet
+    Canvas canvas = new Canvas(mBitmap);
+    canvas.drawPoint(x, y, drawPaint);
+
+    // draw the bitmap to surface 
+    canvas = surface.lockCanvas(null);
+    canvas.drawBitmap(mBitmap, 0, 0, null);
+    surface.unlockCanvasAndPost(canvas);
+}
+
+@Override
+public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    // good place to create the Bitmap
+    mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config. ARGB_8888);
+    // also here we need to transform the old bitmap to new one
+}
+```
+
+### Drawing in a thread
+As opposed to `View`, drawing in a `SurfaceView` it is not necessary to draw in the UI thread. Something like this can be used:
+
+```java
+new Thread(() -> {
+    SurfaceHolder holder = getHolder();
+    Canvas canvas = holder.lockCanvas();
+    if (canvas == null) {
+        return;
+    }
+    drawStuff(canvas);
+    holder.unlockCanvasAndPost(canvas);
+}).start();
+```
+
+### Making it transparent
+```java
+surfaceView.setZOrderOnTop(true);    // necessary
+SurfaceHolder holder = surfaceView.getHolder();
+holder.setFormat(PixelFormat.TRANSPARENT);
+```
+
+## TabLayout
+
+### Without ViewPager
+```xml
+<com.google.android.material.tabs.TabLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="All" />
+</com.google.android.material.tabs.TabLayout>
+```
+
+```java
+TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.add_live));
+tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        if(tabLayout.getSelectedTabPosition() == 0){...}
+    }
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) { }
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) { }
+});
+```
+
+### With ViewPager
+ViewPager allows swiping between tabs and eases tab population.
+
+
 
 ________________________________________________________________________________________________
 # UI Components in Java
@@ -2670,7 +2965,7 @@ Log.i(LOG_TAG, msg_string);
 Printing function name:
 
 ```java
-Log.i(TAG, Thread.currentThread().getStackTrace()[2].getMethodName());
+Log.i(LOG_TAG, Thread.currentThread().getStackTrace()[2].getMethodName());
 ```
 
 ________________________________________________________________________________________________
@@ -2920,7 +3215,7 @@ protected void onCreate(Bundle savedInstanceState) {
 ### Parcelable
 **NOTE:** Check Parceler library below
 
-To allow for your class instances to be sent as a Parcel you must implement the `Parcelable` interface along with a static field called `CREATOR`. The `Parcelable` interface has two methods: `describeContents()` and `writeToParcel()`.
+To allow for your class instances to be sent as a Parcel you must implement the `Parcelable` interface along with a static field called `CREATOR` and a constructor that takes `Parcel` as an argument. The `Parcelable` interface has two methods: `describeContents()` and `writeToParcel()`.
 
 ```java
 public class Person implements Parcelable {
@@ -3116,42 +3411,33 @@ ________________________________________________________________________________
 - Snackbars are shown on the bottom of the screen and contain text with an optional single action. They usually fade out after some time.
 - Add Gradle dependency:
     `implementation 'com.android.support:design:25.1.1'`
-- Usage:
 
-    ```java
-    // Show forever
-    Snackbar.make(parentView, "No Connection", Snackbar.LENGTH_INDEFINITE).show();
-    // Show, add action and set color
-    Snackbar sb = Snackbar.make(parentView, "No Connection", Snackbar.LENGTH_LONG)
-      .setAction("Retry", new MyUndoListener())
-      .setActionTextColor(R.color.green);
-    //...
-    public class MyUndoListener implements View.OnClickListener{
-        @Override public void onClick(View v) {...}
-    }
-    // Add action METHOD2
-    Snackbar sb = Snackbar.make(parentView, "Message is deleted", Snackbar.LENGTH_LONG)
-                    .setAction("UNDO", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar snackbar1 = Snackbar.make(parentView, "Message is restored!", Snackbar.LENGTH_SHORT);
-                snackbar1.show();
-            }
-        });
-    // Dismiss
-    mySnackbar.dismiss();
-    ```
+__Usage__
 
-- `parentView` is a `CoordinatorLayout`, `FrameLayout`, or the top-most container layout, whichever comes first.
-- Adding a listener:
+```java
+// Show forever
+Snackbar.make(parentView, "No Connection", Snackbar.LENGTH_INDEFINITE).show();
 
-- Changing action button text color
+// Show without parent view (e.g. when used in a splash screen)
+View parentView = getWindow().getDecorView().getRootView();
+// To avoid showing up behind the navigation buttons
+View parentView = findViewById(android.R.id.content);
 
-    ```java
-    View sbView = snackbar.getView();
-    TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-    textView.setTextColor(Color.YELLOW);
-    ```
+// Add action and set color
+Snackbar sb = Snackbar.make(parentView, "No Connection", Snackbar.LENGTH_LONG)
+  .setAction("Retry", view -> doStuff())
+  .setActionTextColor(R.color.green);
+
+// Change text color
+View sbView = snackbar.getView();
+TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+textView.setTextColor(Color.YELLOW);
+
+// Dismiss
+mySnackbar.dismiss();
+```
+
+`parentView` is a `CoordinatorLayout`, `FrameLayout`, or the top-most container layout, whichever comes first.
 
 ________________________________________________________________________________________________
 # Adapters
@@ -3435,6 +3721,105 @@ public static String getResponseFromHttpUrl(URL url) throws IOException {
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
         return response.body().string();
+}
+```
+
+### Websocket
+OkHttp handles all the work on a separate thread, so you don't have to worry about making Websocket calls on the main thread.
+
+```java
+// URL should be ws:// or wss:// (secure)
+Request request = new Request.Builder().url(url).build();
+WebSocket webSocket = client.newWebSocket(request,  new WebSocketListener() {
+    @Override
+    public void onOpen(WebSocket webSocket, Response response) {
+        // connection succeeded
+    }
+
+    @Override
+    public void onMessage(WebSocket webSocket, String text) {
+        // text message received
+    }
+
+    @Override
+    public void onMessage(WebSocket webSocket, ByteString bytes) {
+        // binary message received
+    }
+
+    @Override
+    public void onClosed(WebSocket webSocket, int code, String reason) {
+        // no more messages and the connection should be released
+    }
+
+    @Override
+    public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+        // unexpected error 
+    }
+});
+
+// Send a string
+websocket.send("hello");
+// Close websocket
+webSocket.close(1000, "closing");
+```
+
+```swift
+lateinit var webSocket: WebSocket
+
+override fun onCreate(savedInstanceState: Bundle?) {
+    val client = OkHttpClient.Builder()
+        .readTimeout(5, TimeUnit.SECONDS)
+        .build()
+    val request = Request.Builder()
+        .url("wss://echo.websocket.org")
+        .build()
+    val wsListener = MyWebSocketListener ()
+
+    sendButton.setOnClickListener {
+        webSocket = client.newWebSocket(request, wsListener)
+        // Send string
+        webSocket.send("Hello there!")
+        // Send string as binary
+        webSocket.send(ByteString.decodeHex("deadbeef"))
+        // Send byteArray
+        val buffer = ByteArray(1024)
+        val byteString = ByteString.of(buffer, 0, buffer.size)
+        val success = webSocket.send(byteString)
+        // Close webSocket
+        webSocket.close(1000, "Goodbye !")
+    }
+}
+
+private class MyWebSocketListener : WebSocketListener() {
+    override fun onOpen(webSocket: WebSocket, response: Response) {
+        webSocket.send("What's up ?")
+    }
+
+    override fun onMessage(webSocket: WebSocket?, text: String?) {
+        output("Receiving : " + text!!)
+    }
+
+    override fun onMessage(webSocket: WebSocket?, bytes: ByteString?) {
+        output("Receiving bytes : " + bytes!!.hex())
+    }
+
+    override fun onClosing(webSocket: WebSocket?, code: Int, reason: String?) {
+        webSocket!!.close(NORMAL_CLOSURE_STATUS, null)
+        output("Closing : $code / $reason")
+    }
+
+    override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+        super.onFailure(webSocket, t, response)
+        output("Websocket failure!")
+    }
+
+    companion object {
+        private val NORMAL_CLOSURE_STATUS = 1000
+    }
+
+    private fun output(txt: String) {
+        Log.w("WSS", txt)
+    }
 }
 ```
 
@@ -4667,6 +5052,197 @@ void writeToDb(String name, int size){
 
 
 ________________________________________________________________________________________________
+# Using Device Resources
+
+## MediaRecorder
+Needed permissions:
+- `<uses-permission android:name="android.permission.RECORD_AUDIO"/>`
+- `<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>`
+
+`MediaRecorder` records media (audio or video) to a file and the recorded data cannot be accessed until the recording is finished.
+
+_Record_
+
+```java
+MediaRecorder mRecorder;
+
+void startRecorder() {
+    mRecorder = new MediaRecorder();
+    mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+    mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+    mRecorder.setOutputFile(getFullPath("new_file"));
+    mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+    
+    try {
+      mRecorder.prepare();
+    } catch (IOException e) {
+      Log.e(LOG_TAG, "prepare() failed");
+    }
+    mRecorder.start();
+}
+
+void stopRecorder() {
+    mRecorder.stop();
+    // mRecorder.reset();   // You can reuse the object by going back to setAudioSource() step
+    mRecorder.release(); // Now the object cannot be reused and must be recreated
+}
+
+String getFullPath(String fileName) {
+    String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyFolder/";
+    File dir = new File(path);
+    if(!dir.exists())
+    dir.mkdirs();
+    return path + fileName + ".3gp";
+}
+```
+
+_Play_
+
+```java
+// Play
+mPlayer = new MediaPlayer();
+mPlayer.setDataSource(mFileName);
+mPlayer.prepare();
+mPlayer.start();
+
+// Stop
+mPlayer.stop();
+mPlayer.release();
+```
+
+## AudioRecorder
+Needed permission: `<uses-permission android:name="android.permission.RECORD_AUDIO"/>`
+
+`AudioRecorder` obtains the data by polling it from the `AudioRecord` instance, which returna a byte array.
+
+```java
+AudioRecord recorder;
+
+private int sampleRate = 16000 ; // 44100 for music
+private int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_MONO;
+private int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
+int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
+boolean record = false;
+
+void startRecording() {
+    record = true;
+    Thread streamThread = new Thread(() -> {
+        recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channelConfig, audioFormat, minBufSize*10);
+        recorder.startRecording();
+        byte[] buffer = new byte[minBufSize];
+        while (record) {
+            //reading data from MIC into buffer
+            minBufSize = recorder.read(buffer, 0, buffer.length);
+            // Process buffer data...
+        }
+    });
+    streamThread.start()
+}
+
+void stopRecording() {
+    record = false;
+    if (recorder.state == AudioRecord.STATE_INITIALIZED) {
+        recorder.stop()
+        recorder.release()
+    }
+}
+```
+
+## AudioTrack
+Manages and plays audio resources. Can be used in stream mode to play samples recorded by `AudioRecorder` as shown next:
+
+```kotlin
+val inChannelConfig = AudioFormat.CHANNEL_IN_MONO
+val outChannelConfig = AudioFormat.CHANNEL_OUT_MONO
+val audioFormat = AudioFormat.ENCODING_PCM_8BIT
+var minBufSize = AudioRecord.getMinBufferSize(sampleRate, inChannelConfig, audioFormat)
+val buffer = ByteArray(minBufSize * 4)
+
+var record = false
+var recorder = AudioRecord(
+    MediaRecorder.AudioSource.MIC,
+    sampleRate, inChannelConfig, audioFormat, minBufSize * 10
+)
+
+var track = AudioTrack(
+    AudioManager.STREAM_MUSIC, sampleRate,
+    outChannelConfig, audioFormat,
+    minBufSize * 10, AudioTrack.MODE_STREAM
+)
+
+fun recordAndPlay() {
+    record = true
+    val streamThread = Thread {
+        recorder = AudioRecord(
+            MediaRecorder.AudioSource.MIC, sampleRate, inChannelConfig,
+            audioFormat, minBufSize * 10
+        )
+        recorder.startRecording()
+
+        track = AudioTrack(
+            AudioManager.STREAM_MUSIC, sampleRate, outChannelConfig,
+            audioFormat, minBufSize * 10, AudioTrack.MODE_STREAM
+        )
+        track.play()
+
+        while (record) {
+            //reading data from MIC into buffer
+            recorder.read(buffer, 0, buffer.size)
+            track.write(buffer, 0, buffer.size)
+        }
+    }
+    streamThread.start()
+}
+
+fun stopPlaying() {
+    if (track.state == AudioTrack.STATE_INITIALIZED) {
+        track.stop()
+        track.release()
+    }
+}
+```
+
+## Storage Access
+
+### Create an SD card directory
+```java
+String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyFolder/";
+File dir = new File(path);
+if(!dir.exists())
+    dir.mkdirs();
+```
+
+### Open a file via file selector
+In your activity add the button click to add an intent:
+
+```kt
+private const val MY_REQUEST_CODE = 0x33
+
+btnBack.setOnClickListener {
+    val intent = Intent()
+            .setType("*/*")
+            .setAction(Intent.ACTION_GET_CONTENT)
+
+    startActivityForResult(Intent.createChooser(intent, "Select a file"), MY_REQUEST_CODE)
+}
+```
+
+Add the `onActivityResult` in your activity to catch the result:
+
+```kt
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
+    if (requestCode == MY_REQUEST_CODE && resultCode == RESULT_OK) {
+        val selectedFile = data?.data //The uri with the location of the file
+    }
+}
+```
+
+Now selectedFile will contain the location to what they selected.
+
+
+________________________________________________________________________________________________
 # Testing
 [Espresso cheat sheet](https://google.github.io/android-testing-support-library/docs/espresso/cheatsheet)
 
@@ -4859,6 +5435,35 @@ public class MyActivityBasicTest {
     }
 }
 ```
+
+________________________________________________________________________________________________
+# Publishing the App
+
+## Adaptive Launcher Icon
+Starting from Android 8 (API 26), Android supports adaptive launcher icons. Those icons allow a consistent look across the different launchers.
+
+You will have to provide two drawables for the adaptive icon, a background and a foreground. Each drawable *must* be 108dp*108dp in size; background drawables must be opaque whilst foregrounds can contain transparency.
+
+It's preferable to use vector graphics for the icon. To use *Inkscape* do the following:
+- Place the foreground and the background on different layers to make it easier to export them.
+- Using the Adobe Illustrator template from the webpage below can be helpful.
+- Don't use filters. Gradients and shadows are OK.
+- By hiding the other layer, save the foreground and the background as *Plain SVG* files.
+- Examine the resulting file and remove any `<filter>` tags.
+- Look for `<LinearGradient>` tags, check that they have a `<stop>` tag. If not, copy the `<stop>` tags from the element referenced in `xlink:href` property. Save the file.
+- In Android Studio, right-click the `res` folder and select `New > Image Asset`.
+- Provide the foreground and background images.
+- Click `Next` then `Finish` to generate the resources.
+
+Now you can use the new icon as an app icon:
+
+```xml
+<application android:name="ApplicationTitle"
+         android:label="@string/app_label"
+         android:icon="@mipmap/ic_launcher" >
+```
+
+See <https://medium.com/google-design/designing-adaptive-icons-515af294c783> for more details.
 
 ________________________________________________________________________________________________
 # Libraries and Tools
@@ -5160,6 +5765,11 @@ Google launcher-style implementation of switch (enable/disable) icon with easy a
 See <https://github.com/zagum/Android-SwitchIcon>.
 
 ________________________________________________________________________________________________
+## EasyPermissions
+EasyPermissions is a wrapper library to simplify basic system permissions logic when targeting Android M or higher.
+See <https://github.com/googlesamples/easypermissions>.
+
+________________________________________________________________________________________________
 # Widgets
 
 ## Widget Components
@@ -5376,6 +5986,17 @@ ________________________________________________________________________________
 - `10.0.2.2` :  The host's `localhost` (`127.0.0.1`)
 - `10.0.2.15`:  The emulated device network/ethernet interface
 
+Run from command line
+
+```sh
+# Executable location
+/Users/janedoe/Library/Android/sdk/emulator/emulator
+emulator -list-avds
+emulator -avd avd_name
+# OR
+emulator @avd_name
+```
+
 ________________________________________________________________________________________________
 # APIs
 
@@ -5435,6 +6056,16 @@ To "plug" the phone back in:
 
     adb shell dumpsys battery reset
 
+Install APK:
+
+    adb install ./path/to/app.apk
+________________________________________________________________________________________________
+# Android Emulator
+To start the emulator without starting Android Studio:
+
+```sh
+tools/emulator -avd mydroid -no-boot-anim -cpu-delay 0
+```
 
 ________________________________________________________________________________________________
 # Keyboard shortcuts

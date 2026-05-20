@@ -9,80 +9,201 @@
 - [Operators](#operators)
 - [Functions](#functions)
     - [Lambda](#lambda)
+    - [LRU Cache](#lru-cache)
+- [Enums](#enums)
 - [Classes](#classes)
     - [Syntax](#syntax)
     - [Check if a class attribute exists](#check-if-a-class-attribute-exists)
+    - [Data Class](#data-class)
+        - [Field](#field)
+        - [`@dataclass` decorator](#dataclass-decorator)
+    - [Properties](#properties)
+        - [Cached Property](#cached-property)
+    - [Descriptors](#descriptors)
+    - [Optimizing Classes \(Slots\)](#optimizing-classes-slots)
 - [Flow Control](#flow-control)
     - [If-else](#if-else)
     - [Ternary Operator](#ternary-operator)
     - [For Loop](#for-loop)
+    - [With](#with)
 - [Types](#types)
     - [Type Annotation](#type-annotation)
+    - [Type Casting and Conversion](#type-casting-and-conversion)
+    - [Type Checking](#type-checking)
+    - [Bytes](#bytes)
     - [Strings](#strings)
         - [Functions](#functions-1)
         - [Working with non-ascii strings](#working-with-non-ascii-strings)
     - [Collections](#collections)
         - [Lists](#lists)
+            - [Sorting](#sorting)
         - [Dictionaries](#dictionaries)
+        - [OrderedDict](#ordereddict)
         - [Sets](#sets)
         - [Tuples](#tuples)
             - [Definition](#definition)
             - [Operations](#operations)
             - [NamedTuples](#namedtuples)
 - [I/O and OS](#io-and-os)
-    - [Printing](#printing)
-    - [Format Min-language](#format-min-language)
-    - [Pretty Print](#pretty-print)
+    - [Printing and Formatting](#printing-and-formatting)
+        - [Format Min-language](#format-min-language)
+        - [Formatting with f-Strings](#formatting-with-f-strings)
+        - [Pretty Print](#pretty-print)
+        - [`__str__` and `__repr__`](#__str__-and-__repr__)
     - [Input](#input)
-    - [Command-line Arguments](#command-line-arguments)
+    - [Command-line Arguments and Doc Strings](#command-line-arguments-and-doc-strings)
+    - [External call and CMD commands](#external-call-and-cmd-commands)
+    - [Environment Variables](#environment-variables)
+        - [.env for local developement](#env-for-local-developement)
     - [File manipulation](#file-manipulation)
         - [Opening files](#opening-files)
         - [Reading](#reading)
+        - [Edit file contents](#edit-file-contents)
         - [File methods](#file-methods)
-        - [File auto clean-up \(auto close\)](#file-auto-clean-up-auto-close)
     - [OS Operations](#os-operations)
-    - [Issuing shell commands](#issuing-shell-commands)
+    - [Path](#path)
+        - [Relative Paths](#relative-paths)
+        - [Home Directory](#home-directory)
+    - [Running shell commands](#running-shell-commands)
 - [RegEx](#regex)
     - [Groups](#groups)
     - [Examples](#examples)
     - [Regex functions](#regex-functions)
         - [Flags](#flags)
 - [Exception Handling](#exception-handling)
+- [Structured binary data](#structured-binary-data)
 - [Python debugger \(pdb\)](#python-debugger-pdb)
-- [Libraries](#libraries)
+- [Virtual Environment and Requirements.txt](#virtual-environment-and-requirementstxt)
+    - [Platform specific requirements](#platform-specific-requirements)
+- [Debugging with VSCode](#debugging-with-vscode)
+- [Libraries & Frameworks](#libraries--frameworks)
     - [Random](#random)
+    - [DateTime](#datetime)
     - [Timeit](#timeit)
     - [Simple GUI](#simple-gui)
     - [Nose \(Unit Test\)](#nose-unit-test)
+    - [PyTest](#pytest)
     - [Matplotlib](#matplotlib)
+    - [Numpy](#numpy)
     - [PyQt5](#pyqt5)
         - [Components](#components)
         - [Connecting Callbacks \(Slots\)](#connecting-callbacks-slots)
         - [Multithreading](#multithreading)
-        - [Other](#other-1)
             - [Change Widget Color](#change-widget-color)
+    - [PostgreSQL with psycopg2](#postgresql-with-psycopg2)
+    - [Flask](#flask)
+        - [Flask for Web](#flask-for-web)
+            - [App Config](#app-config)
+            - [Receiving input data](#receiving-input-data)
+            - [Useful Flask Functions](#useful-flask-functions)
+        - [HTML Templates with Jinja](#html-templates-with-jinja)
+        - [SQLAlcheemy \(Database ORM\)](#sqlalcheemy-database-orm)
+            - [SQLAlchemy Data Types](#sqlalchemy-data-types)
+            - [CRUD Operations](#crud-operations)
+            - [Useful Query Functions](#useful-query-functions)
+            - [Handle commit exceptions](#handle-commit-exceptions)
+            - [Relationships and Joins](#relationships-and-joins)
+        - [Many-to-Many Relationshiop](#many-to-many-relationshiop)
+            - [SQLAlchemy Object Lifecycle](#sqlalchemy-object-lifecycle)
+            - [Migration](#migration)
+    - [DynamoDB](#dynamodb)
+        - [DynamoDB Operations](#dynamodb-operations)
+    - [Requests](#requests)
+        - [Saving an image from URL](#saving-an-image-from-url)
+        - [Converting an image to bytes](#converting-an-image-to-bytes)
+        - [Session Cookies](#session-cookies)
+    - [Request Cache](#request-cache)
+    - [URL](#url)
+        - [URL Validation](#url-validation)
+        - [URL Parsing and Manipulation](#url-parsing-and-manipulation)
+    - [UUID](#uuid)
+    - [Kivy](#kivy)
+        - [Kivy Basics](#kivy-basics)
+        - [General](#general)
+            - [Window Location](#window-location)
+            - [Kivy Colors](#kivy-colors)
+            - [Kivy Text Formatting and Markup](#kivy-text-formatting-and-markup)
+            - [Universal properties](#universal-properties)
+            - [Arabic Support](#arabic-support)
+            - [Logging](#logging)
+        - [Layouts](#layouts)
+            - [BoxLayout](#boxlayout)
+            - [AnchorLayout](#anchorlayout)
+            - [GridLayout](#gridlayout)
+            - [StackLayout](#stacklayout)
+            - [PageLayout](#pagelayout)
+            - [ScrollView](#scrollview)
+            - [Label](#label)
+            - [Button](#button)
+            - [ToggleButton](#togglebutton)
+            - [Switch](#switch)
+            - [Slider](#slider)
+            - [ProgressBar](#progressbar)
+            - [TextInput](#textinput)
+            - [Dropdown and Spinner](#dropdown-and-spinner)
+            - [Image](#image)
+            - [Popup](#popup)
+        - [Canvas](#canvas)
+        - [KV Audio](#kv-audio)
+        - [Widgets in Python](#widgets-in-python)
+            - [Handlers](#handlers)
+                - [Touch and Keyboard events](#touch-and-keyboard-events)
+            - [Set Window Size](#set-window-size)
+            - [KV Platform and OS](#kv-platform-and-os)
+        - [Scheduling](#scheduling)
+        - [KV File](#kv-file)
+            - [Root and Parent](#root-and-parent)
+            - [KV Properties](#kv-properties)
+            - [Referencing Widgets Using ID](#referencing-widgets-using-id)
+            - [Multiple KV Files](#multiple-kv-files)
+        - [Custom Fonts](#custom-fonts)
+        - [App Settings and Config](#app-settings-and-config)
+            - [Settings Screen](#settings-screen)
+        - [Clipboard in Kivy](#clipboard-in-kivy)
+        - [Material Design with KivyMD](#material-design-with-kivymd)
+            - [Toast](#toast)
+        - [Useful Custom Widgets and Functions](#useful-custom-widgets-and-functions)
 - [Profiling](#profiling)
-- [Multithreading](#multithreading-1)
-    - [Using `threading` library](#using-threading-library)
-    - [Using `ThreadPool`](#using-threadpool)
-- [Multiprocessing](#multiprocessing)
-    - [`Process` class](#process-class)
-    - [`Pool` class](#pool-class)
-    - [`joblib.Parallel` class](#joblibparallel-class)
-    - [Async IO](#async-io)
-    - [Issues](#issues)
+    - [cProfile](#cprofile)
+    - [profilehooks](#profilehooks)
+- [Concurrancy](#concurrancy)
+    - [Concurrent Futures](#concurrent-futures)
+    - [Multithreading](#multithreading-1)
+        - [Using `threading` library](#using-threading-library)
+        - [Using `ThreadPool`](#using-threadpool)
+    - [Multiprocessing](#multiprocessing)
+        - [`Process` class](#process-class)
+        - [`Pool` class](#pool-class)
+        - [`joblib.Parallel` class](#joblibparallel-class)
+        - [Async IO](#async-io)
+        - [Issues](#issues)
 - [CSV](#csv)
     - [CSV Reader](#csv-reader)
     - [CSV Writer](#csv-writer)
 - [XML](#xml)
     - [Example](#example)
     - [Functions](#functions-2)
-- [Web Scrapping](#web-scrapping)
+- [Web Scrapping with BeautifulSoup](#web-scrapping-with-beautifulsoup)
+    - [Open website in browser](#open-website-in-browser)
+    - [Open an image from URL](#open-an-image-from-url)
+- [JSON](#json)
+    - [Encoding](#encoding)
+    - [Decoding](#decoding)
+        - [Decoding into an object](#decoding-into-an-object)
+- [Protobuf](#protobuf)
+    - [Protobuf Types](#protobuf-types)
+- [Serial](#serial)
+- [Telegram](#telegram)
+    - [Useful Resources](#useful-resources)
+    - [Create a bot to send notifications](#create-a-bot-to-send-notifications)
+    - [Send messages from bot to private channel](#send-messages-from-bot-to-private-channel)
+- [PyPy](#pypy)
 - [Code Snippets](#code-snippets)
     - [Using a dictionary of functions](#using-a-dictionary-of-functions)
     - [Using a dictionary to ease updating values](#using-a-dictionary-to-ease-updating-values)
     - [Google Drive API](#google-drive-api)
     - [Run a Local Web Server](#run-a-local-web-server)
+    - [Web server with rquest logging](#web-server-with-rquest-logging)
 
 <!-- /MarkdownTOC -->
 
@@ -154,6 +275,16 @@ sum = lambda x, y : x + y
 print(sum(1,2))
 functools.reduce(lambda x,y: x+y, [1,2,3,4])
 functools.reduce(sum, [1,2,3,4])
+```
+
+## LRU Cache
+Function results could be cached to improve performance.
+
+```python
+from functools import lru_cache
+@lru_cache
+def f(n: int) -> int:
+    return n+1
 ```
 
 ---------------------------------------
@@ -308,6 +439,108 @@ class Person:
         self.sort_index = calculate_index(name, age)
 ```
 
+## Properties
+Properties are used to manage attributes in class. They allow attaching implicit getter and setter methods to given class attributes, handle attribute deletion, and provide an docstrings. This is done using the built-in `property()`:
+
+```python
+property([fget=None, fset=None, fdel=None, doc=None])
+```
+
+`property()` can be used as a function or a decorator.
+
+```python
+class Person:
+    _age = 0
+    # Define getter, setter, deleter here
+    age = property(_my_age_getter, _my_age_setter, _my_age_deleter, "Person's age")
+class Person:
+    _age = 0
+    @property
+    def age(self):
+        return self._age
+    @age.setter
+    def age(self, value):
+        self._age = value
+    @age.deleter
+    def age(self):
+        del self._age
+```
+
+### Cached Property
+We can have a property that is calculated only once and future calls to the getter return a cached value.
+
+```python
+# Method 1 - allow setting the value
+from functools import cached_property
+class Square:
+    @cached_property
+    def area(self):
+        return self.length * self.height
+s = Square()
+s.area = 10     # Works
+
+# Method 2 - read-only value
+from functools import cache
+class Square:
+    @property
+    @cache
+    def area(self):
+        return self.length * self.height
+s = Square()
+s.area = 10     # Error
+```
+
+## Descriptors
+Descriptors are classes allows creating objects that have special behavior when accessed as attributes. This means that descriptors are only used as attributes within other classes.
+A descriptor implements one or more of the following methods. If a descriptor only has a getter, it's _non-data descriptor_. If it also has a setter, it's a _data descriptor_.
+
+```python
+# obj - the descriptor's parent object
+# type - the type of the descriptor's parent object
+__get__(self, obj, type=None) -> object
+__set__(self, obj, value) -> None
+__delete__(self, obj) -> None
+__set_name__(self, owner, name)
+``` 
+
+Descriptors are instantiated once per class, so they should not be used to store data directly.
+
+```python
+class Num():
+    def __init__(self):
+        self.value = 0
+    def __get__(self, obj, type=None) -> object:
+        return self.value
+    def __set__(self, obj, value) -> None:
+        self.value = value
+class Person:
+    age = Num()
+p1 = Person()
+p2 = Person()
+p1.age = 10
+print(p1.age)   # 10
+print(p2.age)   # 10
+```
+
+To solve this, we use `__set_name__()`, which is called whenever the descriptor is instantiated passing the instance name. We can then use that as a key to store the value in the parent's `__dict__`:
+
+```python
+class Num():
+    def __set_name__(self, owner, name):
+        self.name = name
+    def __get__(self, obj, type=None) -> object:
+        return obj.__dict__.get(self.name) or 0
+    def __set__(self, obj, value) -> None:
+        obj.__dict__[self.name] = value
+class Person:
+    age = Num()
+p1 = Person()
+p2 = Person()
+p1.age = 10
+print(p1.age)   # 10
+print(p2.age)   # 0
+```
+
 ## Optimizing Classes (Slots)
 slots are defined using `.__slots__` to list the variables on a class. Variables or attributes not present in `.__slots__` may not be defined. Furthermore, a slots class may not have default values.
 
@@ -416,7 +649,7 @@ Optional[int]
 Tuple[str, int]
 Tuple[int, ...] # Arbitrary length of ints
 Tuple[()]       # Empty tuple
-# Callable
+# functions
 Callable[[Arg1Type, Arg2Type], ReturnType]
 
 # From Py3.9 the following is possible without importing 'typing'
@@ -441,6 +674,13 @@ s.encode()  # str to bytes (utf-8 by default)
 
 # bytes to int
 int.from_bytes(b, byteorder='little')
+
+# From int
+n = 15
+hex(n)      # 0xf
+bin(n)      # 0b1111
+f'{n:x}'    # f
+f'{n:b}'    # 1111
 ```
 
 ## Type Checking
@@ -591,17 +831,19 @@ for item in lst: ...
 
 ```python
 # Instantiation
-    dict = {<key1>:<val1>, <key2>:<val2>, ...}
-    dict = {1:'x', 'abc':53, (1,2):[1,2,3]}
+    d = {<key1>:<val1>, <key2>:<val2>, ...}
+    d = {1:'x', 'abc':53, (1,2):[1,2,3]}
 # Accessing elements
-    dict[<key>] = <new_val>
+    d[<key>] = <new_val>
     # NOTE: Trying to write to a non-existing key will create a new element with that key
-    dict[5] = 2         # If key 5 does not exist it will create it.
+    d[5] = 2         # If key 5 does not exist it will create it.
+# Update several items at once
+    d.update({1: 'one', 2: 'two'})
 # Dictionary iteration
-    for key in dict:
-    for key, value in dict.items():
+    for key in d:
+    for key, value in d.items():
 # Apply function to dictionary values
-    dict2 = {key:func(val) for key, val in dict.items()}
+    dict2 = {key:func(val) for key, val in d.items()}
 # Getting max/min:
     key_of_max = max(mydict, key=mydict.get)
 # Check if an item is in a dict
@@ -843,6 +1085,35 @@ subprocess.run(["ls", "-l"], stdout=subprocess.PIPE)
 
 ```
 
+## Environment Variables
+```python
+import os
+path = os.environ["PATH"]
+# With default value
+url = os.environ.get("URL", "default_url")
+os.environ["API_KEY"] = "YOUR_API_KEY"
+```
+
+### .env for local developement
+`Python-dotenv` reads key-value pairs from a `.env` file and can set them as environment variables. `.env` is also usually added to `.gitignore` especially if contains secrets.
+
+```sh
+pip install python-dotenv
+```
+
+```python
+from dotenv import load_dotenv
+load_dotenv()  # take environment variables from .env.
+```
+
+The `.env` syntax is similar to Bash
+
+```bash
+# Development settings
+DOMAIN=example.org
+ADMIN_EMAIL=admin@${DOMAIN}
+```
+
 ## File manipulation
 
 ### Opening files
@@ -915,6 +1186,8 @@ with open("myfile.txt", 'w') as f:
 
 
 ## OS Operations
+_See also Path_
+
 ```python
     import os
     os.rename(file_name, new_name)
@@ -922,7 +1195,7 @@ with open("myfile.txt", 'w') as f:
     os.mkdir(new_dir_name)
     os.chdir("/home/newdir")
     os.rmdir("/tmp/test")
-    os.listdir('cpptoolsEn')
+    os.listdir('my_dir')        # List files
     os.getcwd()                 # Get current working directory
     # Remove non-empty directory
     shutil.rmtree('/folder_name')
@@ -944,6 +1217,9 @@ from pathlib import Path
 def get_full_path(path: str) -> str:
     return str(Path.joinpath(Path(__file__).parent, path))
 
+# Files in a dir
+pathlist = Path(directory_in_str).glob('**/*.asm')
+for path in pathlist:
 ```
 
 ### Home Directory
@@ -1088,11 +1364,45 @@ finally:
     # Code that must always be excecuted even if except returns
     # or raises another exception
 
+# Print stack trace
+try:
+    do_stuff()
+except Exception:
+    import traceback
+    print(traceback.format_exc())
+    # OR
+    traceback.print_exec()
 # Getting the value passed when the exception was created
 e.args[0]
 ```
 
 ---------------------------------------
+
+# Structured binary data
+Let’s say you want:
+
+* 4-byte header `0x12345678` (little endian)
+* 2-byte integer `0x9ABC` (little endian)
+* 4-byte float `3.14`
+* Text string `"END"`
+
+```python
+import struct
+
+with open("structured.bin", "wb") as f:
+    f.write(struct.pack("<I H f 3s", 0x12345678, 0x9ABC, 3.14, b"END"))
+```
+
+Explanation:
+
+* `<` → little-endian
+* `I` → 4-byte unsigned int
+* `H` → 2-byte unsigned short
+* `f` → 4-byte float
+* `3s` → 3-byte string
+
+---------------------------------------
+
 # Python debugger (pdb)
 To break execution and run pdb:
     `import pdb; pdb.set_trace()`
@@ -1130,6 +1440,8 @@ To break execution and run pdb:
 ```sh
 # Create a new virtual environment
 python3 -m venv venv
+# In case venv is not installed install it
+sudo apt install python3-venv
 # Source it
 source venv/bin/activate
 # Install all the needed packages
@@ -1168,6 +1480,35 @@ Valid `sys_platform` values: `darwin, win32, linux`.
 kivy-deps.sdl2==0.3.1; sys_platform == 'win32'
 futures>=3.0.5; python_version < '3.0'
 futures>=3.0.5; python_version == '2.6' or python_version=='2.7'
+```
+
+---------------------------------------
+# Debugging with VSCode
+You nead to create a `launch.json` file:
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File with Arguments",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "arg1",
+                "arg2"
+            ]
+        }
+    ]
+}
+```
+
+You can provide the arguments at runtime.
+
+```json
+"args": "${command:pickArgs}"
 ```
 
 ---------------------------------------
@@ -1369,6 +1710,14 @@ plt.show()
 
 # Close plot
 plt.close()
+
+# Add a grid
+plt.grid()
+plt.grid(axis = 'y', color = 'green', linestyle = '--', linewidth = 0.5)
+# Avaiable linestyles: '-', '--', '-.', ':', 'None', ' ', '', 'solid', 'dashed', 'dashdot', 'dotted'
+
+# Set or retrieve margins around the data for autoscaling axis limits
+plt.margins(x=0.5, y=0.1)
 ```
 
 ## Numpy
@@ -2184,21 +2533,26 @@ json.dump(data, f, cls=JSONEncoder)
 
 ---------------------------------------
 
-## Web Requests
+## Requests
 ```python
 import requests
 headers = {
     "Accept-Language":  "en-US",
     "Accept-Encoding":  "gzip",
 }
-x = requests.get(url, headers=headers)
+x = requests.get(url, headers=headers, timeout=5)
+
+# Timeout applies to the combination of `connect` and `read` timeouts.
+# When requesting a lot of data, we can set a highter read timeout
+x = requests.get(url, headers=headers, timeout=(5, 25))
 
 # Send as url encoded form
-# Content-Type: application/x-www-form-urlencoded
+# The headers will be set automatically if you pass a dict
 data = {'param1': 'value1', 'param2': 'value2'}
 r = requests.post(url, data=data, headers=headers)
 
 # A raw url encoded form
+# Content-Type: application/x-www-form-urlencoded
 payload ="scope=scope1&password=123&client_id=789&username=951&grant_type=password"
 response = requests.post(url, data=payload, headers=header)
 
@@ -2275,6 +2629,21 @@ def get_image_from_url(url, maxsize=(1200, 850)) -> Tuple[Optional[bytes], Tuple
     return bio.getvalue(), size
 ```
 
+### Session Cookies
+```python
+# Save session cookies
+import requests, pickle
+session = requests.session()
+# Make some calls
+with open(SESSION_COOKIE_FILE, 'wb') as f:
+    pickle.dump(session.cookies, f)
+
+# Load session cookies
+session = requests.session()
+with open(SESSION_COOKIE_FILE, 'rb') as f:
+    session.cookies.update(pickle.load(f))
+```
+
 ## Request Cache
 `requests_cache` can either patch the std library requests making all requests go through it, or use its own session for requests.
 
@@ -2333,6 +2702,26 @@ def create_cache_key(
 cached_session = requests_cache.CachedSession(key_fn=create_cache_key, ignored_parameters=['t'])
 ```
 
+__Manipulating the cache DB__
+
+```python
+from requests_cache import CachedSession
+import sqlite3
+
+cache_path = '/Users/path/to/http_cache.sqlite'
+session = CachedSession(cache_path, backend='sqlite')
+total_items = len(session.cache.responses)
+
+# Iterate over items
+for key in session.cache.responses.keys():
+    response = session.cache.responses.get(key)
+# Response has the following attributes
+['cookies', 'created_at', 'elapsed', 'encoding', 'expires', 'headers', 'history', 'raw', 'reason', 'request', 'status_code', 'url']
+# Remove an item
+del session.cache.responses[key]
+
+```
+
 ## URL
 
 ### URL Validation
@@ -2359,6 +2748,18 @@ full_url = urljoin(url, 'index.html')
 url = quote(url)
 ```
 
+## UUID
+It's recommended to use `udid4` as it creates a more random UDID.
+
+```python
+import uuid
+>>> uuid.uuid4()
+UUID('bd65600d-8669-4903-8a14-af88203add38')
+>>> str(uuid.uuid4())
+'f50ec0b7-f960-400d-91f0-c42a6d44e3d0'
+>>> uuid.uuid4().hex
+'9fe2c4e93f654fdbb24c02b15259716c'
+```
 _______________________________________________________________________________
 
 ## Kivy
@@ -2536,6 +2937,21 @@ import kivy
         size_hint: 0.5, 0.8
 ```
 
+Example: photo grid
+
+```python
+photo_grid = GridLayout(cols=4, size_hint_y=None, spacing=10, padding=10)
+photo_grid.bind(minimum_height=photo_grid.setter('height'))
+for photo in photos:
+    def on_touch_down(x, touch, url=photo):
+        if x.collide_point(*touch.pos):
+            webbrowser.open_new_tab(url)
+    photo_grid.add_widget(AsyncImage(
+        source=photo, on_touch_down=on_touch_down, height=dp(400), size_hint_y=None))
+scroll_view = ScrollView(size_hint=(1, None), size=(Window.width, Window.height))
+scroll_view.add_widget(photo_grid)
+```
+
 #### StackLayout
 
 ```python
@@ -2572,11 +2988,28 @@ import kivy
 #### ScrollView
 Takes only one child. We need to specify the scroll direction by providing a size hint in the child and the height/width that the ScrollView needs to cover.
 
+By default, the `size_hint` is (1, 1), so the content size will fit your ScrollView exactly (you will have nothing to scroll). You must deactivate at least one of the `size_hint` instructions (x or y) of the child to enable scrolling.
+
+You should set the size_hint properties of the child according to the desired scroll direction. For scrolling vertically, set the child’s width to that of the ScrollView (`size_hint_x=1`), and set the `size_hint_y` property to None.
+
+By default, the ScrollView allows scrolling along both the X and Y axes. You can explicitly disable scrolling on an axis by setting the `do_scroll_x` or `do_scroll_y` properties to False.
+
+Example 1:
+
 ```python
 <ScrollViewExample@ScrollView>:
     StackLayoutExample:
         size_hint: 1, None
         height: self.minimum_height
+```
+
+Example 2:
+
+```python
+photo_grid = GridLayout(cols=4, size_hint_y=None, spacing=10, padding=10)
+photo_grid.bind(minimum_height=photo_grid.setter('height'))
+scroll_view = ScrollView(size_hint=(1, None), size=(Window.width, Window.height))
+scroll_view.add_widget(photo_grid)
 ```
 
 #### Label
@@ -3003,13 +3436,18 @@ class MainWidget(Widget):
         super().__init__(**kwargs)
         self.config_keyboard()
 
+    def on_touch_down(x, touch):
+        """We always need to check the collide point"""
+        if x.collide_point(*touch.pos):
+            do_stuff()
+
     def on_touch_down(self, touch):
+        """Accept touch event is the widget is a TextInput or can be pressed"""
         self.isTextInput = False
 
         def filter(widget):
             for child in widget.children:
                 filter(child)
-            # Accept touch event is the widget is a TextInput or can be pressed
             if widget.collide_point(*touch.pos):
                 if isinstance(widget, TextInput):
                     self.isTextInput = True
@@ -3670,11 +4108,13 @@ tag = soup.div
 tag = soup.find('my-tag')
 # Tag contents as a list
 tag.contents
-# Accessing an inner tag
+# Accessing an inner tag. First encountered p
 tag.p
 # Accessing an attribute
 tag.p['class']
 tag.p.get('class')
+# Convert to contents to plain text (remove <strong> and <b> etc.)
+tag.p.text
 
 # Prettify the HTML
 tag.prettify()
@@ -3691,6 +4131,10 @@ tag = soup.find(id='content_div')
 tag = soup.find(attr={"class": "myclass"})
 # Find all matching elements
 tags = soup.find_all('a')
+
+# Get full url from relative href
+from urllib.parse import urljoin
+link = urljoin(base_url, href)
 ```
 
 ## Open website in browser
@@ -3736,6 +4180,16 @@ with open("data_file.json", "r") as read_file:
     data = json.load(read_file)
 # From a variable
 data = json.loads(json_string)
+
+# Utility function
+def load_json_file(file_path: str, default=None):
+    """Load JSON from file or return default if file doesn't exist"""
+    if default is None:
+        default = {}
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            return json.load(file)
+    return default
 ```
 
 ### Decoding into an object
@@ -3779,6 +4233,21 @@ from protobuf_decoder.protobuf_decoder import Parser
 parsed_data = Parser().parse(hex_string)
 ```
 
+## Protobuf Types
+§
+```python
+# List
+# 29: {1: {1: 6}}
+# 29: {1: {1: 23}}
+# .proto
+repeated MyList myList = 29;
+# .py
+item1 = filter.myList.add()
+item1.newEthnicities.ethnicities = 6
+item2 = filter.myList.add()
+item2.newEthnicities.ethnicities = 23
+```
+
 ---------------------------------------
 # Serial
 
@@ -3796,6 +4265,23 @@ with serial.Serial('/dev/ttyUSB3') as ser:
 
 ---------------------------------------
 # Telegram
+
+## Useful Resources
+How to implement access control for a Telegram bot
+https://advancedweb.hu/how-to-implement-access-control-for-a-telegram-bot/
+
+Create a Telegram Bot with AWS Lambda Integration
+https://dev.to/aws-builders/create-a-telegram-bot-with-aws-lambda-integration-part-1-4616
+
+
+Send notifications to a Telegram bot for events in an AWS account
+https://advancedweb.hu/send-notifications-to-a-telegram-bot-for-events-in-an-aws-account/
+
+
+Deploy a serverless Telegram bot to AWS using Terraform
+https://advancedweb.hu/deploy-a-serverless-telegram-bot-to-aws-using-terraform/
+
+
 
 ## Create a bot to send notifications
 
@@ -3849,7 +4335,8 @@ with open(image_file, "rb") as f:
 ## Send messages from bot to private channel
 First we need to find the channel ID:
 1. Add the bot to the channel as admin
-2. Go to getUpdates API URL in the browser and find the channel ID:
+2. (Maybe not needed) Send any message in the channel/group.
+3. Go to getUpdates API URL in the browser and find the channel ID:
 
 https://api.telegram.org/bot<BOT_TOKEN>/getUpdates
 
@@ -3863,7 +4350,16 @@ https://api.telegram.org/bot<BOT_TOKEN>/getUpdates
     },
 ```
 
-
+---------------------------------------
+# PyPy
+```sh
+sudo apt install pypy3
+pypy3 -m venv venv-pypy
+source venv-pypy/bin/activate
+pypy3 -m ensurepip
+pypy3 -m pip install -r requirements.txt
+pypy3 main.py
+```
 
 ---------------------------------------
 # Code Snippets

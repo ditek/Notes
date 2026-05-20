@@ -1,3 +1,166 @@
+# Linux
+<!-- MarkdownTOC -->
+
+- [Various:](#various)
+- [GUI Shortcuts:](#gui-shortcuts)
+- [CLI:](#cli)
+    - [Command Redirection and Pipelines](#command-redirection-and-pipelines)
+    - [Directory Traversal](#directory-traversal)
+    - [File linking](#file-linking)
+    - [I/O](#io)
+        - [Using echo to write to a file](#using-echo-to-write-to-a-file)
+    - [Searching](#searching)
+        - [Grep](#grep)
+        - [PGrep](#pgrep)
+        - [Silver Searcher](#silver-searcher)
+        - [Locate](#locate)
+        - [LS with wildcards](#ls-with-wildcards)
+        - [Find](#find)
+    - [Managing files](#managing-files)
+- [User Management](#user-management)
+    - [Change Hostname](#change-hostname)
+    - [Changing File Permissions](#changing-file-permissions)
+    - [New Sudoer User](#new-sudoer-user)
+    - [Never Ask sudo Password](#never-ask-sudo-password)
+- [Disk Management](#disk-management)
+    - [Resize a disk image](#resize-a-disk-image)
+- [Services, Logging, Journal](#services-logging-journal)
+    - [systemctl](#systemctl)
+    - [journalctl](#journalctl)
+    - [dmesg](#dmesg)
+- [Networking](#networking)
+    - [Interfaces](#interfaces)
+        - [Permanent static IP](#permanent-static-ip)
+    - [Routing](#routing)
+    - [Bridging](#bridging)
+    - [Configure WiFi](#configure-wifi)
+        - [WiFi with authentication](#wifi-with-authentication)
+    - [Port Scanning and Pinging](#port-scanning-and-pinging)
+        - [Nmap](#nmap)
+    - [SS](#ss)
+        - [NC \(netcat\)](#nc-netcat)
+        - [Ping](#ping)
+    - [TCP Dump](#tcp-dump)
+    - [DNS](#dns)
+    - [Firewalld](#firewalld)
+    - [OpenVPN](#openvpn)
+    - [Wireguard](#wireguard)
+        - [Server setup](#server-setup)
+        - [Adding clients to the server](#adding-clients-to-the-server)
+- [Compression, Tar](#compression-tar)
+- [VIM](#vim)
+    - [Vim Search](#vim-search)
+    - [Vim Surround](#vim-surround)
+    - [Packages](#packages)
+        - [Setup Vundle](#setup-vundle)
+        - [Useful Plugins](#useful-plugins)
+    - [NeoVim](#neovim)
+        - [LazyVim Error](#lazyvim-error)
+    - [VS Code Plugin](#vs-code-plugin)
+- [SCP](#scp)
+- [SSH](#ssh)
+    - [Enabling SSH](#enabling-ssh)
+    - [SSH Logs](#ssh-logs)
+    - [Key Generation](#key-generation)
+    - [Authorized Keys](#authorized-keys)
+        - [Authorized Keys Management](#authorized-keys-management)
+    - [SSH Port Forwarding](#ssh-port-forwarding)
+    - [SSH Config File](#ssh-config-file)
+    - [Reset SSH Keys on Oracle Cloud](#reset-ssh-keys-on-oracle-cloud)
+    - [Run Script on Remote](#run-script-on-remote)
+    - [Reverse SSH](#reverse-ssh)
+- [Background and Detached Processes](#background-and-detached-processes)
+    - [Reattached Process to Terminal](#reattached-process-to-terminal)
+    - [Run in Background with Logs](#run-in-background-with-logs)
+- [Auto-run commands at startup](#auto-run-commands-at-startup)
+    - [rc.local](#rclocal)
+    - [.bashrc .zshrc .profile](#bashrc-zshrc-profile)
+    - [Upstart job \(for systems older than 15.04\) \(not recommended\)](#upstart-job-for-systems-older-than-1504-not-recommended)
+    - [Init script \(obsolete\)](#init-script-obsolete)
+    - [Cron](#cron)
+        - [Cron Logs](#cron-logs)
+- [Package Management](#package-management)
+    - [rpm](#rpm)
+- [Bash](#bash)
+    - [Specifying shell location](#specifying-shell-location)
+    - [Bash Variables](#bash-variables)
+    - [Command Line Arguments](#command-line-arguments)
+    - [Command Substitution](#command-substitution)
+    - [Operators](#operators)
+    - [Arithmetic Expansion](#arithmetic-expansion)
+    - [SH list](#sh-list)
+    - ['test' command](#test-command)
+    - [String Manipulation](#string-manipulation)
+    - [Arrays](#arrays)
+    - [Flow Control](#flow-control)
+        - [If..Then](#ifthen)
+        - [Do...While](#dowhile)
+        - [For](#for)
+        - [Case](#case)
+    - [Functions](#functions)
+    - [Exiting the script](#exiting-the-script)
+    - [Error Handling](#error-handling)
+    - [Alias](#alias)
+- [Makefile](#makefile)
+    - [Structure](#structure)
+        - [Default Target](#default-target)
+    - [Line Prefixes](#line-prefixes)
+    - [Variables](#variables)
+    - [Flow Control](#flow-control-1)
+    - [Make Functions](#make-functions)
+    - [String Manipulation](#string-manipulation-1)
+- [Commands](#commands)
+    - [basename](#basename)
+    - [dirname](#dirname)
+    - [Date and time](#date-and-time)
+    - [man](#man)
+    - [info](#info)
+- [Tools](#tools)
+    - [Curl](#curl)
+    - [Meg](#meg)
+    - [Sed \(Linux Stream Editor\)](#sed-linux-stream-editor)
+    - [AWK](#awk)
+    - [Youtube Downloader](#youtube-downloader)
+    - [Protoscope and Protocol Buffers](#protoscope-and-protocol-buffers)
+    - [XXD hex conversion](#xxd-hex-conversion)
+    - [nohup no hangup background services](#nohup-no-hangup-background-services)
+    - [Tailscale](#tailscale)
+    - [Tmux](#tmux)
+        - [Tmux config repo](#tmux-config-repo)
+        - [Tmux Issues](#tmux-issues)
+- [Serial](#serial)
+    - [Minicom](#minicom)
+    - [Screen](#screen)
+- [Raspberry](#raspberry)
+    - [GPIO Control](#gpio-control)
+    - [SD Card Backup](#sd-card-backup)
+    - [Java for RPi](#java-for-rpi)
+    - [2.5G Ethernet](#25g-ethernet)
+    - [Apt Update on old OS](#apt-update-on-old-os)
+- [Home Server](#home-server)
+    - [Docker](#docker)
+    - [Portainer](#portainer)
+    - [Homer](#homer)
+    - [ShellInABox](#shellinabox)
+    - [Nginx Proxy Manager](#nginx-proxy-manager)
+    - [Nextcloud](#nextcloud)
+    - [Pihole](#pihole)
+        - [WSL with Pihole](#wsl-with-pihole)
+    - [Dynamic DNS](#dynamic-dns)
+    - [Influxdb, Telegraf, Grafana](#influxdb-telegraf-grafana)
+    - [Netdata](#netdata)
+        - [Configure parent and child nodes](#configure-parent-and-child-nodes)
+    - [n8n Workflow Automation](#n8n-workflow-automation)
+- [Using NTFS Disks](#using-ntfs-disks)
+- [OS Specific](#os-specific)
+    - [Ubuntu Codename](#ubuntu-codename)
+- [Software](#software)
+    - [Virtual Box](#virtual-box)
+    - [ROS2](#ros2)
+- [Common Problems](#common-problems)
+
+<!-- /MarkdownTOC -->
+
 # Various:
 - Tex tools for linux: texlive
     texlive texlive-latex texlive-xetex
@@ -14,18 +177,6 @@
     chmod 644 ~/.bashrc
 - Add a directory to PATH:
     export PATH="/path/to/dir:$PATH"
-
-## systemctl
-See systemctl service logs
-
-```sh
-journalctl -u service-name
-# only log messages for the current boot:
-journalctl -u service-name -b
-# Follow log
-journalctl -f
-```
-
 
 # GUI Shortcuts:
 - Lock the screen:                  CTRL-ALT-L
@@ -163,6 +314,13 @@ echo 'text' | sudo tee -a /file.txt > /dev/null
 - To grep a special character add '$' before it 
     $ grep $'\t' bar.txt
 
+### PGrep
+Similar to grep, but used to find processes.
+By default, pgrep only searches the process name. The name is a truncated version of the entire command.
+- `-x` - the exact pattern (no partial match)
+- `-f` - the pattern is normally only matched against the process name (first 15 chars).  When -f is set, the full command line is used.
+
+
 ### Silver Searcher
 
 10x faster than grep for searching for a word within files in a directory.
@@ -199,7 +357,7 @@ ls ba[!a-s]   # accepts letters outside a-s range
 
 ### Find
 
-- Find files in specific dir with specific conditions.
+- Find files in specific dir with specific conditions (default <directories> is `.`)
     $ find <directories> <arguments>
 - Available 'find' arguments:
     * -name <file/dir name>
@@ -279,6 +437,12 @@ sudo nano /etc/hostname
 sudo nano /etc/hosts
 ```
 
+Even easier, use this command:
+
+```sh
+hostnamectl set-hostname my_host
+```
+
 ## Changing File Permissions
 `chmod` is used to control file privileges
 
@@ -350,6 +514,45 @@ sudo gparted /dev/loop0
 ```
 
 _______________________________________________________________________________
+# Services, Logging, Journal
+
+## systemctl
+Manage systemd services.
+
+```sh
+systemctl status service-name
+systemctl start service-name
+systemctl stop service-name
+systemctl restart service-name
+# Enable/disable service on boot
+systemctl enable service-name
+systemctl disable service-name
+# Reload service config without restarting it
+systemctl reload service-name
+```
+
+## journalctl
+See systemctl service logs
+
+```sh
+# Logs of a specific unit (service)
+journalctl -u service-name
+# only log messages for the current boot:
+journalctl -u service-name -b
+# Follow log
+journalctl -f
+```
+
+## dmesg
+View kernel logs. Useful for:
+- Hardware and kernel issues.
+- OOM killer.
+
+```sh
+dmesg
+```
+
+_______________________________________________________________________________
 # Networking
 
 ## Interfaces
@@ -383,7 +586,6 @@ static routers=192.168.0.1
 static domain_name_servers=192.168.0.1 8.8.8.8 fd51:42f8:caae:d92e::1
 ```
 
-
 ## Routing
 Add an entry to the routing table
 
@@ -400,7 +602,29 @@ route del 10.120.100.0 eth0
 # To modify a route, you have to delete it and add it again
 ip route del 172.31.1.0/24 via 30.1.2.2
 ip route add 172.31.1.0/24 via 172.31.1.69 metric 0
+ip route add 10.2.0.0/24 via 7.0.0.1 dev sim0
 ```
+
+## Bridging
+We need bridge-utils
+
+```sh
+sudo apt install bridge-utils
+```
+
+Create the bridge and add each interface to it
+
+```sh
+brctl addbr br0
+brctl addif br0 eth1
+brctl addif br0 eth2
+# Bring up the interfaces and bridge
+ifconfig eth1 0.0.0.0
+ifconfig eth2 0.0.0.0
+ifconfig br0 up
+```
+
+
 
 ## Configure WiFi
 Scan available networks (assuming `wlan0` is the interface name):
@@ -466,12 +690,34 @@ nmap --script vuln 254.12.132.165
 -O    # Show operating system
 ```
 
+## SS
+
+```sh
+# Check port usage
+ss -tulpn | grep :80
+```
+
 ### NC (netcat)
 ```sh
 # Ping a single port
 nc -vz <remote-host> <port>
 # Port scanning
 nc -vz aarvik.dk 1-100
+```
+
+### Ping
+```sh
+# i - interval between packets (sec). Sudo needed for interval < 2ms
+# c - end 128 packets
+# q - only show summary
+sudo ping -i 0 -c 128 -q 1.1.1.1
+ping -i 0.002 -c 128 -q 1.1.1.1
+```
+
+Include timestamp in ping message
+
+```sh
+ping 1.1.1.1 | while read pong; do echo "$(date): $pong"; done
 ```
 
 ## TCP Dump
@@ -497,6 +743,20 @@ port <port> Limit to packets on a certain port
 icmp
 # Complex filter
 sudo tcpdump -i any -c5 -nn "port 80 and (src 192.168.122.98 or src 54.204.39.132)"
+```
+
+## DNS
+```sh
+# Lookup
+nslookup google.com
+dig google.com
+# Query specific server
+dig @8.8.8.8 google.com
+# Resolve config
+cat /etc/resolv.conf
+
+# Resolv daemon status
+systemctl status systemd-resolved
 ```
 
 ## Firewalld
@@ -550,10 +810,19 @@ openvpn3 session-manage --config ${CONFIGURATION_PROFILE_NAME} --disconnect
 ```
 
 ## Wireguard
+### Server setup
+__On Linux__
 
-### Windows
+```sh
+# Restrict permissions of created files and directories
+umask 077
+# Generate public and private keys for the server
+wg genkey | tee /etc/wireguard/privatekey | wg pubkey > /etc/wireguard/publickey  
+```
 
-#### Server Setup
+
+__On Windows__
+
 Add an empty tunnel. Private and public keys will be auto-generated. Add the server address and an optional port (default is 51820)
 ```sh
 [Interface]
@@ -561,7 +830,7 @@ Address = 10.254.0.1/24
 ListenPort = 49312
 ```
 
-#### Adding clients to the server
+### Adding clients to the server
 First, generate the client keys. In command prompt:
 
 ```sh
@@ -600,36 +869,7 @@ PublicKey =
 PresharedKey = 
 ```
 _______________________________________________________________________________
-# Date and time
-Set date from the command line
-
-    date +%Y%m%d -s "20120418"
-
-Set time from the command line
-
-    date +%T -s "11:14:00"
-
-Set time and date from the command line
-
-    date -s "23 JUL 2021 14:14:00"
-    date -s "2021-07-29 11:55:33"
-
-_______________________________________________________________________________
-# man
-- Display chapter #
-    man <#> <command>
-- View all man pages with <word> in an their pages
-    man -a <word>
-
-
-# info
-- 'info' is the GNU alternative to man that uses links and menus
-- Syntax:
-    info                    => Show topics index
-    info <topic name>       => Show topic info page
-- To move b/w nodes use n, p, u for next, previous and up node.
-
-# Compression
+# Compression, Tar
 
 _Note_: On Mac use `gtar` (`brew install gnu-tar`). 
 
@@ -637,6 +877,9 @@ _Note_: On Mac use `gtar` (`brew install gnu-tar`).
 # Compress
 tar -czvf <output_file> <target_to_compress>
 tar -czvf projects.tar.gz $HOME/projects/
+
+# Decompress
+tar -xvf <file>
 
 # View oontents
 tar -tf file.tgz
@@ -653,7 +896,7 @@ tar -tf file.tgz
 ```
 
 _______________________________________________________________________________
-# vim
+# VIM
 - Piping stdout to vim:
     $ grep foo bar.txt | vim - 
 - Run vim command (that starts with ':') from command line
@@ -702,6 +945,17 @@ Commands
     o                   open a new line bellow and enter insert mode
     O                   open a new line above and enter insert mode
 
+Marks
+    ma              create a bookmark 'a'. The label can be lower or upper case.
+                    Lower case label: same file. Upper case: across files
+    `a              jump to bookmark position
+    'a              jump to bookmark line
+    d'a             delete from current line to line of mark a
+    d`a             delete from current cursor position to position of mark a
+    c'a             change text from current line to line of mark a
+    y`a             yank text to unnamed buffer from cursor to position of mark a
+    :marks          list all the current marks
+    :marks aB       list marks a, B
 ```
 - Tab
     If you're in insert mode:
@@ -714,7 +968,11 @@ Commands
         '<' - shift selection left
         '>' + shift selection right
 
-- Search
+## Vim Search
+(http://vim.wikia.com/wiki/Search_and_replace)
+
+__Search__
+
     *                   search for the word under cursor
     /foo                search for 'foo'
     ?foo                search in the backward direction
@@ -722,7 +980,8 @@ Commands
     N                   previous search result
     <phrase>/ignore\c   ignore case
 
-- Search and replace    (http://vim.wikia.com/wiki/Search_and_replace)
+__Search and replace__
+
     :s/foo/bar/g        Change each 'foo' to 'bar' in the current line.
     :%s/foo/bar/g       Change each 'foo' to 'bar' in all the lines.
     :%s/\t/  /g         Replace tabs with spaces
@@ -730,6 +989,17 @@ Commands
     :.,$s/foo/bar/g     Change each 'foo' to 'bar' for all lines from the current line (.) to the last line ($) inclusive.
     :.,+2s/foo/bar/g    Change each 'foo' to 'bar' for the current line (.) and the next 2 lines (+2).
     :%s//bar/g          Replace each match of the last search pattern with 'bar'.
+
+## Vim Surround
+__Normal mode__
+
+y s <motion> <delimiter>
+ysw" -> surround word    
+ysiw" -> surrounding the word independent of the cursor
+
+__Visual mode__
+
+After making the selection just use `S <delimiter>`
 
 ## Packages
 ### Setup Vundle
@@ -780,10 +1050,15 @@ sudo apt install powerline
 
 # Syntax highlighting and linting (slow on Pi)
 Plugin 'dense-analysis/ale'
+# Multi cursor
+Plugin 'terryma/vim-multiple-cursors'
 ```
 
 ## NeoVim
+Installation:
+
 ```sh
+# Linux
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
 chmod u+x nvim.appimage
 ./nvim.appimage
@@ -791,8 +1066,19 @@ chmod u+x nvim.appimage
 ./nvim.appimage --appimage-extract
 ./squashfs-root/AppRun --version
 
+# MacOS
+brew install neovim
+
 sudo cp ./nvim.appimage /usr/local/bin/nvim
 sudo chmod 755 /usr/local/bin/nvim
+```
+
+### LazyVim Error
+If you get "Failed to source" error on LazyVim startup, run the following:
+
+```sh
+find ~/.config/nvim -type f -exec dos2unix {} \;
+find ~/.local/share/nvim -type f -exec dos2unix {} \;
 ```
 
 ## VS Code Plugin
@@ -804,14 +1090,14 @@ Use default behaviour for keybindings.
 }
 ```
 _______________________________________________________________________________
-# scp
+# SCP
 - Copy the file "foobar.txt" from a remote host to the local host
     $ scp your_username@remotehost.edu:foobar.txt /some/local/directory
 - Copy the file "foobar.txt" from the local host to a remote host
     $ scp foobar.txt your_username@remotehost.edu:/some/remote/directory
 - To copy a directory add -r
 
-# ssh
+# SSH
 
 ## Enabling SSH
 ```sh
@@ -819,11 +1105,18 @@ sudo update-rc.d ssh enable
 sudo service ssh start
 ```
 
+## SSH Logs
+```sh
+journalctl -t sshd
+# Since last boot and in reverse order
+ journalctl -t sshd -b0 -r
+```
+
 ## Key Generation
 Generate your ssh-rsa key using an email as a label:
 
 ```sh
-ssh-keygen -t rsa -b 4096 -C "cusom_label"
+ssh-keygen -t rsa -b 4096 -C "custom_label"
 ```
 
 ## Authorized Keys
@@ -837,7 +1130,52 @@ or
 cat ~/.ssh/id_rsa.pub | ssh pi@192.168.0.11 'cat >> .ssh/authorized_keys'
 ```
 
-## Port Forwarding
+or
+
+```sh
+ssh-copy-id pi@192.168.0.11
+```
+
+### Authorized Keys Management
+https://gist.github.com/sivel/c68f601137ef9063efd7
+
+- Add all the public keys to a file
+- Use Nginx to host the file
+- Write a script to fetch the file from the server and place it in `/usr/local/bin/userkeys.sh`. `$1` is the SSH username.
+
+```sh
+#!/bin/bash
+curl -sf https://keyserver.example.org/users/$1/keys
+```
+
+- Set file permissions
+
+```sh
+sudo chmod 755 /usr/local/bin/userkeys.sh
+```
+
+- Verify that `nobody` can run the file
+
+```sh
+sudo -su nobody
+/usr/local/bin/userkeys.sh
+```
+
+- Configure `/etc/ssh/sshd_config`. `AuthorizedKeysCommand` passes the username to the command
+
+```sh
+AuthorizedKeysCommand      /usr/local/bin/userkeys.sh
+AuthorizedKeysCommandUser  nobody
+```
+
+- Restart the SSH daemon
+
+```sh
+/etc/init.d/ssh restart
+```
+
+
+## SSH Port Forwarding
 ```sh
 ssh -NL <REMOTE_PORT>:localhost:<LOCAL_PORT> <SERVER_USER>@<SERVER_IP>
 ssh -NL 1883:127.0.0.1:1883 fh@192.168.1.111
@@ -846,7 +1184,7 @@ ssh -fNL 1883:127.0.0.1:1883 fh@192.168.1.111
 
 ```
 
-## Port Forwarding and Config File
+## SSH Config File
 Add the following in `~/.ssh/config`
 
 ```sh
@@ -864,10 +1202,16 @@ Host 16.10/port6
   HostName port6
   User root
   ProxyCommand ssh -W %h:%p root@10.10.16.10
+
+# ProxyJump
+# Allows to get to userB@ServerB that is accessible via userA@ServerA
+Host mybox
+  HostName ServerB
+  User userB
+  ProxyJump userA@ServerA
 ```
 
 ## Reset SSH Keys on Oracle Cloud
-
 - Login to Oracle Cloud
 - Launch a console connection
 - Reboot the instance
@@ -889,14 +1233,159 @@ chown opc:opc authorized_keys
 /usr/sbin/reboot -f
 ```
 
-_______________________________________________________________________________
-# Auto-run commands at startup with rc.local
+## Run Script on Remote
+```sh
+# Local script (no args)
+ssh user@remote 'bash -s' < script.sh
+# Remote script
+ssh user@remote '~/run --name jon'
+```
 
+## Reverse SSH
+
+
+___
+# Background and Detached Processes
+## Reattached Process to Terminal
+__Using reptyr__
+
+```sh
+reptyr PID
+```
+
+__Using screen__
+
+```sh
+screen -S session_name    # Start a new screen session with a name
+your_command > logfile.txt 2>&1   # Run your command, output to file
+# Press Ctrl-A, then D to detach from the session
+
+# To reattach:
+screen -r session_name
+```
+
+## Run in Background with Logs
+__&__
+
+Note that closing the terminal would also terminate the process.
+
+```sh
+your_command > logfile.txt 2>&1 &
+```
+__tee__
+
+If you want to both see the output on the console and write it to a file at the same time, you can use the `tee` command. This will allow you to see the output in real-time and also save it to logfile.txt. If you close the terminal or it gets disconnected, however, you won't see the output unless you were using screen or tmux.
+
+```sh
+your_command 2>&1 | tee logfile.txt &
+```
+
+__nohup__
+
+Combining `nohup` with `tail -f` can keep your process running independently of the terminal session, and you can monitor the output in real-time from another terminal:
+
+
+```sh
+nohup your_command > logfile.txt 2>&1 &
+tail -f logfile.txt
+```
+
+
+_______________________________________________________________________________
+# Auto-run commands at startup
+## rc.local
 Run at startup:
 Add the commands to `/etc/rc.local` before `exit 0`.
 
-Run at login or starting a terminal:
-Add the commands to `~/.bashrc`.
+## .bashrc .zshrc .profile
+
+_.profile_
+
+- Run only once at system login (for bash and certain other shells - not zsh).
+- Use for:
+    * one-time setup, things things that are not shell-specific like environment variables.
+    * programs that you want to run once when you log in or for the whole session
+
+
+_.bash_profile_
+
+- Overrides .profile if present
+
+_.zprofile_
+
+- .profile equivalent for zsh
+
+_.bashrc & .zsh_
+
+- Sourced by every sub-shell
+- Use for per-shell stuff like such as aliases and function definitions, shell option settings, completion settings, prompt settings, key bindings, etc.
+
+
+## Upstart job (for systems older than 15.04) (not recommended)
+Create `/etc/init/myjob.conf` with content like the following
+
+```sh
+description     "my job"
+start on startup
+task
+exec /path/to/my/script.sh
+```
+
+## Init script (obsolete)
+Create a new script in /etc/init.d/myscript.
+
+```sh
+vi /etc/init.d/myscript
+# Configure the init system to run this script at startup.
+update-rc.d myscript defaults
+```
+
+## Cron
+- `crontab -e` - open the cron config file
+- `crontab -l` - list current jobs
+
+```sh
+# Job definition format:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  *  command
+
+# Run every day at 1:00
+00 01 * * mon-fri /usr/local/bin/rsbu -vbd1
+# Run every three months
+30 15 1 1,4,7,10 * /usr/local/bin/reports.sh
+# Run every hour at xx:01 between 9-17 inclusive
+01 09-17 * * * /usr/local/bin/hourlyreminder.sh
+# Multiple ranges
+0 0-8,17-23 * * * script.sh
+# */x can be used to run every x, i.e. when time is divisible by x.
+# Run every 5 min, every 2 hours between 8 and 18
+*/5 08-18/2 * * * /usr/local/bin/mycronjob.sh
+
+59 */3 * * * /home/pi/git/ProfileViewer/profile_viewer_kivy/venv_bot/bin/python3 /home/pi/git/ProfileViewer/profile_viewer_kivy/bot_filter_notifier.py > /home/pi/bot_filter_notifier.log 2>&1
+
+# Special times
+@reboot script.sh
+```
+
+__IMPORTANT__
+
+Cron does not use the user environment variables. To make sure commands run as expected, their full path must be provided or PATH should be set properly.
+_Note:_ You have to set all paths. Writing `PATH="xxx:$PATH"` will not work!
+
+```sh
+# In crontab -e
+PATH=/bin:/usr/bin:/sbin
+```
+
+### Cron Logs
+```sh
+grep CRON /var/log/syslog
+```
 
 _______________________________________________________________________________
 # Package Management
@@ -979,13 +1468,14 @@ _______________________________________________________________________________
 - The shell path can be specified in the first line as:
     #!/path/to/shell
 
-
-## Variables
+## Bash Variables
 - Definition
     var=value_without_spaces
     var="value with spaces"
-    var=$(pwd)
-    var=`pwd`
+    var=$(command)
+    var=`command`
+    var="$foo bar"
+    var="{$foo}bar"
 - Usage
     - Variables are referenced as $var_name
     - Variables can be referenced within double quotes
@@ -1049,7 +1539,26 @@ A sequence of zero or more commands separated by newlines, semicolons or '&'
 - Exit with the status determined by EXPRESSION. It can be used in two ways:
     test OPTIONS EXPRESSION
     [ OPTIONS EXPRESSION ]
+
+```bash
+( EXPRESSION )              # EXPRESSION is true
+! EXPRESSION                # EXPRESSION is false
+EXPRESSION1 -a EXPRESSION2       # both EXPRESSION1 and EXPRESSION2 are true
+EXPRESSION1 -o EXPRESSION2       # either EXPRESSION1 or EXPRESSION2 is true
+STRING                      # the length of STRING is nonzero
+-z STRING                   # the length of STRING is zero
+STRING1 = STRING2           # the strings are equal
+STRING1 != STRING2          # the strings are not equal
+INTEGER1 -eq INTEGER2       # INTEGER1 is equal to INTEGER2
+INTEGER1 -ge INTEGER2       # INTEGER1 is greater than or equal to INTEGER2
+INTEGER1 -gt INTEGER2       # INTEGER1 is greater than INTEGER2
+INTEGER1 -le INTEGER2       # INTEGER1 is less than or equal to INTEGER2
+INTEGER1 -lt INTEGER2       # INTEGER1 is less than INTEGER2
+INTEGER1 -ne INTEGER2       # INTEGER1 is not equal to INTEGER2
+```
+
 - Examples
+    ```sh
     # Check if a file exists
 
     # Check if a directoroy exists
@@ -1062,6 +1571,7 @@ A sequence of zero or more commands separated by newlines, semicolons or '&'
     [ -f $file ]        # -d $dir , -e $file_or_dir
     # Negation
     [ ! -f $file ]
+    ```
 
 ## String Manipulation
 ```sh
@@ -1127,7 +1637,7 @@ done
 - The execution depends on the exit status of 'list'
 - The 'test' command is usually used for the condition list
 - The usage of conditions is illustrated in the following example
-(spces between if, [, ], operators and values must be used as shown)
+(spaces between if, [, ], operators and values must be used as shown)
     if [ "$1" = "1"] || [ "$1" = "2" ]
     then
        echo "The first choice is nice"
@@ -1204,7 +1714,7 @@ done
 
 *Return Value*
 
-Bash functions do not allow to return a value to the caller. The `return` statement specifies the function's status, which is a numeric value like the value specified in an exit statement. The status value is stored in the `$?` variable. If a function does not contain a return statement, its status is set based on the status of the last statement executed in the function.
+Bash functions do not allow to return a value to the caller. The `return` statement specifies the function's status code, which is a numeric value like the value specified in an exit statement. The status value is stored in the `$?` variable. If a function does not contain a return statement, its status is set based on the status of the last statement executed in the function.
 
 - Variables can be defined locally within a function using local name=value.
 - Example:
@@ -1326,6 +1836,56 @@ X := $(STRINGS:%.c=%.h)  # Replace all '.c' with '.h'
 foo := $(shell git describe --tags | cut -c 1-6)
 ```
 
+___
+# Commands
+## basename
+basename - strip directory and suffix from filenames 
+
+```sh
+ basename NAME [SUFFIX]
+basename /usr/bin/sort
+      -> "sort"
+basename include/stdio.h .h
+      -> "stdio"
+```
+
+## dirname
+strip last component from file name
+
+```sh
+dirname /usr/bin/
+      -> "/usr"
+dirname stdio.h
+      -> "."
+```
+
+## Date and time
+Set date from the command line
+
+    date +%Y%m%d -s "20120418"
+
+Set time from the command line
+
+    date +%T -s "11:14:00"
+
+Set time and date from the command line
+
+    date -s "23 JUL 2021 14:14:00"
+    date -s "2021-07-29 11:55:33"
+
+## man
+- Display chapter #
+    man <#> <command>
+- View all man pages with <word> in an their pages
+    man -a <word>
+
+## info
+- 'info' is the GNU alternative to man that uses links and menus
+- Syntax:
+    info                    => Show topics index
+    info <topic name>       => Show topic info page
+- To move b/w nodes use n, p, u for next, previous and up node.
+
 _______________________________________________________________________________
 # Tools
 
@@ -1386,6 +1946,14 @@ sed '/x/d'
 sed '/^$/d' file.txt
 ```
 
+## AWK
+```sh
+# Print first and last column
+awk '{print $1, NF}' log.txt
+# Find lines containing string
+awk '/ERR/ {print}' log.txt
+```
+
 ## Youtube Downloader
 https://github.com/yt-dlp/yt-dlp
 
@@ -1416,9 +1984,95 @@ $ xxd -r -p <<< "1005420e65787065637465645f76616c756500000000" | protoscope
 # Binary to hex
 xxd [options] file.bin
 ```
-_______________________________________________________________________________
-# Serial and Screen
 
+## nohup no hangup background services
+`nohup` allows running a program in the background. It catches the hangup signal, while the ampersand doesn't.
+
+Normally, when running a command using `&` and exiting the shell afterwards, the shell will terminate the sub-command with the hangup signal (kill -SIGHUP <pid>). This can be prevented using `nohup`, as it catches the signal and ignores it so that it never reaches the actual application.
+
+```sh
+# Run in bg
+nohup my_cmd &
+# Run in bg and write stdout/stderr to a file
+nohup my_cmd > logfile.txt 2>&1 &
+```
+
+## Tailscale
+```sh
+curl -fsSL https://tailscale.com/install.sh | sh
+# Add node with auth key
+sudo tailscale up --authkey <my-auth-key>
+# Network status
+tailscale status
+```
+
+## Tmux
+```sh
+# Start a named session “work”
+tmux new -s work
+# Detach (leave everything running)
+# → Ctrl‑b, then d
+
+# List open sessions
+tmux ls
+# Reattach to first session
+tmux attach
+# Reattach to “work”
+tmux attach -t work
+# Kill session
+tmux kill-session -t work
+```
+
+Keyboard shortcuts (all start with leader `Ctrl-b`)
+```sh
+c - create new window
+n - switch between running windows
+<n> - switch to window <n>
+d   - detach session
+s   - list open sessions
+%   - split vertically
+"   - split horizontally
+:   - enter command mode
+```
+
+Commands (enter command mode with `:` first)
+```sh
+rename-window <name>
+rename-session <name>
+kill-session
+```
+
+### Tmux config repo
+```sh
+rm -rf ~/tmux-config
+git -c core.autocrlf=false clone https://github.com/samoshkin/tmux-config.git ~/tmux-config
+cd ~/tmux-config
+dos2unix install.sh
+bash ./install.sh
+```
+
+### Tmux Issues
+```sh
+##### No scroll back with mouse #####
+# Add this to ~/.tmux.conf (on the remote host):
+set -g mouse on
+set -g history-limit 50000  # bigger scrollback per pane
+# Reload (from inside tmux):
+tmux source-file ~/.tmux.conf
+
+```
+
+_______________________________________________________________________________
+# Serial
+
+## Minicom
+To exit Minicom use Ctrl+a + q
+
+```sh
+sudo minicom -D /dev/ttyUSB2
+```
+
+## Screen
 ```sh
 # Determine baud rate
 stty < /dev/ttyS0
@@ -1441,35 +2095,6 @@ screen -L [-Logfile file] cmd
 # Detach and run as daemon
 screen -dmS name
 rm screenlog.0 && screen -L -dmS simcom sudo SIM8200-M2_5G_HAT_code/Goonline/simcom-cm && sleep 2 && tail -f screenlog.0
-```
-
-_______________________________________________________________________________
-# Cron
-Use `crontab -e` to open the cron config file.
-
-```sh
-# Job definition format:
-# .---------------- minute (0 - 59)
-# |  .------------- hour (0 - 23)
-# |  |  .---------- day of month (1 - 31)
-# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
-# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
-# |  |  |  |  |
-# *  *  *  *  *  command
-
-# Run every day at 1:00
-00 01 * * mon-fri /usr/local/bin/rsbu -vbd1
-# Run every three months
-30 15 1 1,4,7,10 * /usr/local/bin/reports.sh
-# Run every hour at xx:01 between 9-17 inclusive
-01 09-17 * * * /usr/local/bin/hourlyreminder.sh
-# Multiple ranges
-0 0-8,17-23 * * * script.sh
-# */x can be used to run every x, i.e. when time is divisible by x.
-# Run every 5 min, every 2 hours between 8 and 18
-*/5 08-18/2 * * * /usr/local/bin/mycronjob.sh
-
-59 */3 * * * /home/pi/git/ProfileViewer/profile_viewer_kivy/venv_bot/bin/python3 /home/pi/git/ProfileViewer/profile_viewer_kivy/bot_filter_notifier.py > /home/pi/bot_filter_notifier.log 2>&1
 ```
 
 _______________________________________________________________________________
@@ -1507,12 +2132,42 @@ gunzip --stdout PiOS.img.gz | sudo dd bs=4M of=/dev/disk2 status=progress
 ## Java for RPi
 Get it from https://bell-sw.com/pages/downloads/
 
+## 2.5G Ethernet
+We need a PCIe card for CM4 and then to patch the kernel for the drivers:
+https://www.youtube.com/watch?v=wCbQQ5-sjGM
+
+
+## Apt Update on old OS
+```sh
+# Method 1 (doesn't always work)
+sudo apt-get install -y --no-install-recommends dirmngr gnupg
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 \
+  --recv-keys 0E98404D386FA1D9 6ED0E7B82643E131
+
+# Method 2 - switch to archive repo on Buster
+# 1) Check it's actually buster
+. /etc/os-release && echo "$PRETTY_NAME"
+
+# 2) Backup your APT sources
+sudo cp /etc/apt/sources.list{,.bak-$(date +%F)}
+
+# 3) Replace sources with the archived buster repos
+sudo tee /etc/apt/sources.list >/dev/null <<'EOF'
+deb http://archive.debian.org/debian buster main contrib non-free
+deb http://archive.debian.org/debian-security buster/updates main contrib non-free
+deb http://archive.debian.org/debian buster-updates main contrib non-free
+EOF
+
+# 4) Since archived Release files are expired, tell APT to ignore "Valid-Until"
+echo 'Acquire::Check-Valid-Until "false";' | sudo tee /etc/apt/apt.conf.d/99ignore-valid-until
+```
+
 _______________________________________________________________________________
 # Home Server
 
 ## Docker
 ```sh
-url -sSL https://get.docker.com | sh
+curl -sSL https://get.docker.com | sh
 # Add current user to docker group
 sudo usermod -aG docker ${USER}
 # Enable service
@@ -1530,8 +2185,19 @@ Container management GUI. Use port `9000` for HTTP and `9433` for HTTPS.
 docker run -d -p 9000:9000 -p 9443:9443 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
 ```
 
-To get more Protainer container templates, copy the `Protainer v2 (no OMV)` template URL from https://github.com/SelfhostedPro/selfhosted_templates and paste it to Portainers Settings -> App Templates.
-A list of Pi OS ARM32 compatible apps is available at https://github.com/novaspirit/pi-hosted.
+__Other templates__
+
+We can use other templates to get more Protainer containers. Copy the template URL to Portainers Settings -> App Templates.
+
+- `Protainer v2 (no OMV)` from https://github.com/SelfhostedPro/selfhosted_templates
+- https://portainer-templates.as93.net
+- A list of Pi OS ARM32 compatible apps is available at https://github.com/novaspirit/pi-hosted.
+
+__Env files__
+
+https://www.portainer.io/blog/using-env-files-in-stacks-with-portainer
+
+__Notes__
 
 To get the container links to work, set the right IP at Environments -> local.
 
@@ -1659,7 +2325,32 @@ sudo systemctl restart connman.service
 This will disable the connmand DNS proxy.
 Source: https://wiki.archlinux.org/title/ConnMan#Avoiding_conflicts_with_local_DNS_server
 
+### WSL with Pihole
+WSL can't find the DNS server when Pihole is used via Wireguard. Here is the solution.
 
+Add the following to `/etc/wsl.conf` to prevent `/etc/resolv.conf` from being auto-generated (by default it points to `/mnt/wsl/resolv.conf`):
+
+```sh
+[network] 
+generateResolvConf = false
+```
+
+Restart WSL from Powershell (admin):
+
+```sh
+wsl --shutdown
+```
+
+Now `/etc/resolv.etc` should be gone. Create it with the following contents specifying the main DNS server and a backup:
+
+```sh
+nameserver    x.x.x.x
+nameserver    y.y.y.y
+```
+
+Restart WSL again and everything should work now.
+
+___
 ## Dynamic DNS
 In Google Domains:
 - Select domain -> DNS -> Dynamic DNS -> Manage -> Create new record -> Enter subdomain.
@@ -1701,11 +2392,81 @@ epassword='generated_password'
 your_resource.your_domain.tld
 ```
 
+For CloudFlare:
+Create an API token with the permissions `Zone:DNS:Edit` and `Zone:DNS:Read`.
+(https://medium.com/@timothy.halim/ddclient-cloudflare-setup-in-ubuntu-e271c53d3ce8)
+
+```sh
+ssl=yes
+daemon=300
+use=web
+protocol=cloudflare
+zone=domain.net
+login=token
+password='CloudflareAPIToken'
+sub.domain.net
+```
+
+ddclient v. 3.9.1 doesn't support brearer auth from Cloudflare, so we need to patch it. Open `/usr/sbin/ddclient` and replace the lines
+
+```sh
+my $headers = “X-Auth-Email: $config{$key}{‘login’}\n”;
+$headers .= “X-Auth-Key: $config{$key}{‘password’}\n”;
+$headers .= “Content-Type: application/json”;
+```
+
+with
+
+```sh
+my $headers = "Content-Type: application/json\n";
+if ($config{$key}{'login'} eq 'token') {
+    $headers .= "Authorization: Bearer $config{$key}{'password'}";
+} else {
+    $headers .= "X-Auth-Email: $config{$key}{'login'}\n";
+    $headers .= "X-Auth-Key: $config{$key}{'password'}";
+}
+```
+
+Run ddclient manually to check that it works
+```sh
+# Clearing the cache first
+sudo rm /var/cache/ddclient/ddclient.cache
+sudo ddclient -daemon=0 -debug -verbose -noquiet
+```
+
 Restart the service
 
 ```sh
 sudo service ddclient restart
 ```
+
+Check sevice status
+
+```sh
+sudo service ddclient status
+```
+
+___
+## Influxdb, Telegraf, Grafana
+_NOTE!!! when setting up access tokens in Influxdb GUI use Ctrl-C to copy. "Copy to pasteboard" button does not work_
+
+Grafana GUI:
+- Use Flux as the query language
+- URL: http://influxdb:8086
+- Auth: all disabled
+- Org and bucket: from Influxdb
+- Token: generate one in Influxdb or use the user token
+
+___
+## Netdata
+Automatically collect all kinds of useful device metrics (cpu, network, processes, etc.)
+
+### Configure parent and child nodes
+https://learn.netdata.cloud/docs/observability-centralization-points/metrics-centralization-points/configuring-metrics-centralization-points
+
+___
+## n8n Workflow Automation
+
 _______________________________________________________________________________
 # Using NTFS Disks
 https://askubuntu.com/questions/11840/how-do-i-use-chmod-on-an-ntfs-or-fat32-partition/887502#887502
@@ -1730,6 +2491,15 @@ To allow setting permissions for NTFS disks, `ntfs-3g` is needed.
     UUID=34A0456DA04536A0 /mnt/windows ntfs-3g defaults,nofail 0 0
     ```
 5. Unmount and try if the new setting works by mounting using `mount -a`.
+
+_______________________________________________________________________________
+# OS Specific
+## Ubuntu Codename
+```sh
+lsb_release -cs
+# In Ubuntu-based distros
+cat /etc/os-release | grep UBUNTU
+```
 
 _______________________________________________________________________________
 # Software
