@@ -1,0 +1,17 @@
+name: Trigger Website Note Update
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  ping-website:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Update in ditek.github.io
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          repository: ditek/ditek.github.io
+          event-type: update-notes
