@@ -1,3 +1,77 @@
+# iOS
+<!-- MarkdownTOC -->
+
+- [Shortcuts](#shortcuts)
+- [Concepts](#concepts)
+    - [MVC Design Pattern](#mvc-design-pattern)
+    - [Delegate Pattern](#delegate-pattern)
+    - [Completion Handler](#completion-handler)
+- [UI Design](#ui-design)
+    - [Storyboard](#storyboard)
+        - [Actions and Outlets](#actions-and-outlets)
+    - [App Lifecycle](#app-lifecycle)
+        - [ViewController Lifecycle](#viewcontroller-lifecycle)
+    - [Multiple View](#multiple-view)
+        - [Transition Using Segues](#transition-using-segues)
+            - [Prepare for Segue](#prepare-for-segue)
+        - [Presenting VCs](#presenting-vcs)
+            - [Custom VCs](#custom-vcs)
+            - [Built-in VCs](#built-in-vcs)
+                - [UIImagePickerController](#uiimagepickercontroller)
+                - [UIActivityViewController](#uiactivityviewcontroller)
+        - [Storing Shared Data](#storing-shared-data)
+            - [AppDelegate](#appdelegate)
+    - [Constraints](#constraints)
+    - [Adding UI Components in Code](#adding-ui-components-in-code)
+    - [UI Components](#ui-components)
+        - [ViewController](#viewcontroller)
+        - [StackView](#stackview)
+        - [UIAlertController](#uialertcontroller)
+        - [UIButton](#uibutton)
+        - [UIImageView](#uiimageview)
+        - [UITextField](#uitextfield)
+        - [UITableView](#uitableview)
+        - [UICollectionView](#uicollectionview)
+            - [UICollectionViewFlowLayout](#uicollectionviewflowlayout)
+        - [Navigation Item](#navigation-item)
+        - [UINavigationController](#uinavigationcontroller)
+        - [UITabBarController](#uitabbarcontroller)
+    - [UIPickerView](#uipickerview)
+- [Platform Foundation](#platform-foundation)
+    - [NSNotification](#nsnotification)
+        - [Posting a Notification](#posting-a-notification)
+        - [Observing Notification using Selector](#observing-notification-using-selector)
+        - [Observing Notification using Closure](#observing-notification-using-closure)
+        - [Unregistering an Observer](#unregistering-an-observer)
+- [UIKit](#uikit)
+    - [UIApplication](#uiapplication)
+        - [Redirecting to another app](#redirecting-to-another-app)
+        - [Handling Redirect URLs](#handling-redirect-urls)
+- [Built in Frameworks](#built-in-frameworks)
+    - [AVFoundation](#avfoundation)
+        - [AVAudioRecorder](#avaudiorecorder)
+        - [AVAudioEngine](#avaudioengine)
+    - [MapKit](#mapkit)
+- [info.plist](#infoplist)
+- [Networking](#networking)
+    - [URL](#url)
+    - [URLSession](#urlsession)
+    - [URLRequest](#urlrequest)
+    - [Notes Regarding URLs](#notes-regarding-urls)
+- [OS](#os)
+    - [Reading files](#reading-files)
+- [JSON](#json)
+    - [JSONSerialization](#jsonserialization)
+    - [Codable](#codable)
+        - [Decodable](#decodable)
+        - [Encodable](#encodable)
+- [Code Snippets](#code-snippets)
+        - [Shift View When Keyboard Shows Up](#shift-view-when-keyboard-shows-up)
+        - [Render view to an image](#render-view-to-an-image)
+        - [Screen Dimensions](#screen-dimensions)
+
+<!-- /MarkdownTOC -->
+
 # Shortcuts
 On the Navigator Panel on the left side, the following keyboard shortcuts cycle through the different navigators.
 
@@ -1239,5 +1313,3 @@ func generateMemedImage() -> UIImage {
 view.frame.size.width
 view.frame.size.height
 ```
-
-

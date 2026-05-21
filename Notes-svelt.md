@@ -23,7 +23,7 @@ Apps are usually composed in several components each in its own file. See [Neste
 
 [Reactivity](#reactivity) is achieved simply by referring to variables declared in the script. [Reactive declarations](#reactive-declarations) are used when a variable is dependent on other variables. [Statements](#reactive-statements) can also be reactive and reevaluated when the state changes.
 
-^/(?!.DS_Store)$ 
+
 ___
 
 ## Variables

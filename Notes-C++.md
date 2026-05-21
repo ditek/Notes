@@ -1,3 +1,40 @@
+# C++
+
+<!-- MarkdownTOC -->
+
+- [Language Fundamentals](#language-fundamentals)
+  - [Includes](#includes)
+  - [Functions](#functions)
+  - [Casting](#casting)
+  - [Memory management](#memory-management)
+  - [Miscellaneous](#miscellaneous)
+- [Classes](#classes)
+  - [Constructor](#constructor)
+  - [Destructor](#destructor)
+  - [Methods and member functions](#methods-and-member-functions)
+  - [Const Members](#const-members)
+  - [Static Members](#static-members)
+  - [Type conversion](#type-conversion)
+  - [Friend functions](#friend-functions)
+  - [Operator overloading](#operator-overloading)
+  - [Other](#other)
+- [Data Types](#data-types)
+  - [Strings](#strings)
+    - [String streams](#string-streams)
+  - [Enums](#enums)
+  - [Struct](#struct)
+  - [Containers](#containers)
+    - [std::vector](#stdvector)
+    - [std::list](#stdlist)
+    - [std::map](#stdmap)
+    - [std::pair](#stdpair)
+- [Input files](#input-files)
+- [Namespaces](#namespaces)
+- [Design Patterns](#design-patterns)
+  - [Singleton](#singleton)
+
+<!-- /MarkdownTOC -->
+
 # Language Fundamentals
 
 ## Includes
@@ -257,7 +294,6 @@ If access specifier is not declared explicitly, then by default access specifier
   }
 ```
 
----------------------------------------  
 ---------------------------------------
 ## Containers
 
