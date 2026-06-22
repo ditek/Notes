@@ -52,6 +52,8 @@
         - [`__str__` and `__repr__`](#__str__-and-__repr__)
     - [Input](#input)
     - [Command-line Arguments and Doc Strings](#command-line-arguments-and-doc-strings)
+        - [CLI with argparse](#cli-with-argparse)
+        - [CLI with sys.argv](#cli-with-sysargv)
     - [External call and CMD commands](#external-call-and-cmd-commands)
     - [Environment Variables](#environment-variables)
         - [.env for local developement](#env-for-local-developement)
@@ -71,25 +73,53 @@
     - [Regex functions](#regex-functions)
         - [Flags](#flags)
 - [Exception Handling](#exception-handling)
-- [Structured binary data](#structured-binary-data)
-- [Python debugger \(pdb\)](#python-debugger-pdb)
+- [Debugging](#debugging)
+    - [Python debugger \(pdb\)](#python-debugger-pdb)
+    - [Debugging with VSCode](#debugging-with-vscode)
 - [Virtual Environment and Requirements.txt](#virtual-environment-and-requirementstxt)
     - [Platform specific requirements](#platform-specific-requirements)
-- [Debugging with VSCode](#debugging-with-vscode)
-- [Libraries & Frameworks](#libraries--frameworks)
-    - [Random](#random)
-    - [DateTime](#datetime)
+- [Data Formats](#data-formats)
+    - [Structured binary data](#structured-binary-data)
+    - [CSV](#csv)
+        - [CSV Reader](#csv-reader)
+        - [CSV Writer](#csv-writer)
+    - [XML](#xml)
+    - [JSON](#json)
+        - [JSON Encoding](#json-encoding)
+        - [JSON Decoding](#json-decoding)
+            - [JSON Decoding into an object](#json-decoding-into-an-object)
+    - [Protobuf](#protobuf)
+        - [Protobuf Types](#protobuf-types)
+- [Testing](#testing)
     - [Timeit](#timeit)
-    - [Simple GUI](#simple-gui)
     - [Nose \(Unit Test\)](#nose-unit-test)
     - [PyTest](#pytest)
+    - [Profiling & Performance Evaluation](#profiling--performance-evaluation)
+        - [cProfile](#cprofile)
+        - [profilehooks](#profilehooks)
+- [Libraries](#libraries)
+    - [Random](#random)
+    - [DateTime](#datetime)
     - [Matplotlib](#matplotlib)
     - [Numpy](#numpy)
-    - [PyQt5](#pyqt5)
-        - [Components](#components)
-        - [Connecting Callbacks \(Slots\)](#connecting-callbacks-slots)
-        - [Multithreading](#multithreading)
-            - [Change Widget Color](#change-widget-color)
+    - [UUID](#uuid)
+- [Web & Databases](#web--databases)
+    - [Requests](#requests)
+        - [Saving an image from URL](#saving-an-image-from-url)
+        - [Converting an image to bytes](#converting-an-image-to-bytes)
+        - [Session Cookies](#session-cookies)
+    - [Request Cache](#request-cache)
+    - [URL](#url)
+        - [URL Validation](#url-validation)
+        - [URL Parsing and Manipulation](#url-parsing-and-manipulation)
+    - [Web Scrapping with BeautifulSoup](#web-scrapping-with-beautifulsoup)
+        - [Open website in browser](#open-website-in-browser)
+        - [Open an image from URL](#open-an-image-from-url)
+    - [```](#)
+    - [Telegram](#telegram)
+        - [Useful Resources](#useful-resources)
+        - [Create a bot to send notifications](#create-a-bot-to-send-notifications)
+        - [Send messages from bot to private channel](#send-messages-from-bot-to-private-channel)
     - [PostgreSQL with psycopg2](#postgresql-with-psycopg2)
     - [Flask](#flask)
         - [Flask for Web](#flask-for-web)
@@ -108,15 +138,13 @@
             - [Migration](#migration)
     - [DynamoDB](#dynamodb)
         - [DynamoDB Operations](#dynamodb-operations)
-    - [Requests](#requests)
-        - [Saving an image from URL](#saving-an-image-from-url)
-        - [Converting an image to bytes](#converting-an-image-to-bytes)
-        - [Session Cookies](#session-cookies)
-    - [Request Cache](#request-cache)
-    - [URL](#url)
-        - [URL Validation](#url-validation)
-        - [URL Parsing and Manipulation](#url-parsing-and-manipulation)
-    - [UUID](#uuid)
+- [GUI](#gui)
+    - [Simple GUI](#simple-gui)
+    - [PyQt5](#pyqt5)
+        - [Components](#components)
+        - [Connecting Callbacks \(Slots\)](#connecting-callbacks-slots)
+        - [Qt Multithreading](#qt-multithreading)
+            - [Change Widget Color](#change-widget-color)
     - [Kivy](#kivy)
         - [Kivy Basics](#kivy-basics)
         - [General](#general)
@@ -145,12 +173,12 @@
             - [Popup](#popup)
         - [Canvas](#canvas)
         - [KV Audio](#kv-audio)
-        - [Widgets in Python](#widgets-in-python)
+        - [Kivy Widgets in Python](#kivy-widgets-in-python)
             - [Handlers](#handlers)
                 - [Touch and Keyboard events](#touch-and-keyboard-events)
             - [Set Window Size](#set-window-size)
             - [KV Platform and OS](#kv-platform-and-os)
-        - [Scheduling](#scheduling)
+        - [Scheduling Kivy Events](#scheduling-kivy-events)
         - [KV File](#kv-file)
             - [Root and Parent](#root-and-parent)
             - [KV Properties](#kv-properties)
@@ -163,12 +191,9 @@
         - [Material Design with KivyMD](#material-design-with-kivymd)
             - [Toast](#toast)
         - [Useful Custom Widgets and Functions](#useful-custom-widgets-and-functions)
-- [Profiling](#profiling)
-    - [cProfile](#cprofile)
-    - [profilehooks](#profilehooks)
 - [Concurrancy](#concurrancy)
     - [Concurrent Futures](#concurrent-futures)
-    - [Multithreading](#multithreading-1)
+    - [Multithreading](#multithreading)
         - [Using `threading` library](#using-threading-library)
         - [Using `ThreadPool`](#using-threadpool)
     - [Multiprocessing](#multiprocessing)
@@ -177,33 +202,20 @@
         - [`joblib.Parallel` class](#joblibparallel-class)
         - [Async IO](#async-io)
         - [Issues](#issues)
-- [CSV](#csv)
-    - [CSV Reader](#csv-reader)
-    - [CSV Writer](#csv-writer)
-- [XML](#xml)
-    - [Example](#example)
-    - [Functions](#functions-2)
-- [Web Scrapping with BeautifulSoup](#web-scrapping-with-beautifulsoup)
-    - [Open website in browser](#open-website-in-browser)
-    - [Open an image from URL](#open-an-image-from-url)
-- [JSON](#json)
-    - [Encoding](#encoding)
-    - [Decoding](#decoding)
-        - [Decoding into an object](#decoding-into-an-object)
-- [Protobuf](#protobuf)
-    - [Protobuf Types](#protobuf-types)
+    - [Streamlit](#streamlit)
+        - [Streamlit Widgets](#streamlit-widgets)
+        - [Streamlit Layout & Containers](#streamlit-layout--containers)
+        - [Session State](#session-state)
+        - [Cached Resources](#cached-resources)
+        - [Config](#config)
 - [Serial](#serial)
-- [Telegram](#telegram)
-    - [Useful Resources](#useful-resources)
-    - [Create a bot to send notifications](#create-a-bot-to-send-notifications)
-    - [Send messages from bot to private channel](#send-messages-from-bot-to-private-channel)
 - [PyPy](#pypy)
 - [Code Snippets](#code-snippets)
     - [Using a dictionary of functions](#using-a-dictionary-of-functions)
     - [Using a dictionary to ease updating values](#using-a-dictionary-to-ease-updating-values)
     - [Google Drive API](#google-drive-api)
     - [Run a Local Web Server](#run-a-local-web-server)
-    - [Web server with rquest logging](#web-server-with-rquest-logging)
+    - [Web server with request logging](#web-server-with-request-logging)
 
 <!-- /MarkdownTOC -->
 
@@ -681,6 +693,10 @@ hex(n)      # 0xf
 bin(n)      # 0b1111
 f'{n:x}'    # f
 f'{n:b}'    # 1111
+
+# ASCII and Char
+ord('a')    # 97
+chr(97)     # 'a''
 ```
 
 ## Type Checking
@@ -1034,7 +1050,20 @@ f"{name.lower()}"       # john
 ```
 
 ## Command-line Arguments and Doc Strings
-The easiest way is to use `sys.argv`. The arguments start from `arg[1]` while the script name is `arg[0]`
+
+### CLI with argparse
+`argparse` provides more functionality thatn `sys.argv` allowing for sub-commands, optional commands, etc.
+
+Argument actions - What value will the argument store when the flag is present.
+- `store` - stores the argument's value (default)
+- `store_true`, `store_false` - stores True/False when the flag is present.
+
+```python
+
+```
+
+### CLI with sys.argv
+We can use `sys.argv`. The arguments start from `arg[1]` while the script name is `arg[0]`
 
 ```python
 """
@@ -1118,10 +1147,19 @@ ADMIN_EMAIL=admin@${DOMAIN}
 
 ### Opening files
 ```python
-    f = open(file_name [, access_mode])
-    # File auto clean-up (auto close)
-    with open("myfile.txt") as f:
-        [file_operations]
+f = open(file_name [, access_mode, encoding])
+# File auto clean-up (auto close)
+with open("myfile.txt", "r", encoding="utf-8") as f:
+    [file_operations]
+
+# Opening files following a pattern
+from pathlib import Path
+files1 = Path(location).glob('*.md')
+# Include subfolders
+files2 = Path(location).rglob('*.md')
+for file in files1:
+    with open(file) as f:
+        ...
 ```
 
 **Access modes:**
@@ -1378,32 +1416,9 @@ e.args[0]
 
 ---------------------------------------
 
-# Structured binary data
-Let’s say you want:
+# Debugging
 
-* 4-byte header `0x12345678` (little endian)
-* 2-byte integer `0x9ABC` (little endian)
-* 4-byte float `3.14`
-* Text string `"END"`
-
-```python
-import struct
-
-with open("structured.bin", "wb") as f:
-    f.write(struct.pack("<I H f 3s", 0x12345678, 0x9ABC, 3.14, b"END"))
-```
-
-Explanation:
-
-* `<` → little-endian
-* `I` → 4-byte unsigned int
-* `H` → 2-byte unsigned short
-* `f` → 4-byte float
-* `3s` → 3-byte string
-
----------------------------------------
-
-# Python debugger (pdb)
+## Python debugger (pdb)
 To break execution and run pdb:
     `import pdb; pdb.set_trace()`
 
@@ -1434,7 +1449,36 @@ To break execution and run pdb:
                     Not all jumps are allowed – e.g. you cannot jump into the middle of a for loop or out of a finally clause.
     q(uit)          Quit from the debugger. The program being executed is aborted.
 
+## Debugging with VSCode
+You nead to create a `launch.json` file:
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File with Arguments",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "arg1",
+                "arg2"
+            ]
+        }
+    ]
+}
+```
+
+You can provide the arguments at runtime.
+
+```json
+"args": "${command:pickArgs}"
+```
+
 ---------------------------------------
+
 # Virtual Environment and Requirements.txt
 
 ```sh
@@ -1483,36 +1527,272 @@ futures>=3.0.5; python_version == '2.6' or python_version=='2.7'
 ```
 
 ---------------------------------------
-# Debugging with VSCode
-You nead to create a `launch.json` file:
+# Data Formats
 
-```json
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Python Debugger: Current File with Arguments",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "args": [
-                "arg1",
-                "arg2"
-            ]
-        }
-    ]
-}
+## Structured binary data
+Let’s say you want:
+
+* 4-byte header `0x12345678` (little endian)
+* 2-byte integer `0x9ABC` (little endian)
+* 4-byte float `3.14`
+* Text string `"END"`
+
+```python
+import struct
+
+with open("structured.bin", "wb") as f:
+    f.write(struct.pack("<I H f 3s", 0x12345678, 0x9ABC, 3.14, b"END"))
 ```
 
-You can provide the arguments at runtime.
+Explanation:
 
-```json
-"args": "${command:pickArgs}"
+* `<` → little-endian
+* `I` → 4-byte unsigned int
+* `H` → 2-byte unsigned short
+* `f` → 4-byte float
+* `3s` → 3-byte string
+
+---------------------------------------
+## CSV
+
+### CSV Reader
+
+```
+1/2/2014,5,8,red
+no delimeter
+```
+
+```python
+import csv
+with open('example.csv') as csvfile:
+    # Return a reader, which is a list of lists
+    #[ ['1/2/2014', '5', '8', 'red'], ['no delimiter'] ]
+    readCSV = csv.reader(csvfile, delimiter=',')
+    for row in readCSV:
+        ...
+```
+
+### CSV Writer
+```python
+    import csv
+    csvfile = open('filename.csv', 'w', newline='')
+    writer = csv.writer(csvfile, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    csvData = ['Band', 'Frequency', 'Baud Rate', "MER"]
+    writer.writerow(csvData)
+    csvfile.close()
+    for child in root:
+        # ...
 ```
 
 ---------------------------------------
-# Libraries & Frameworks
+## XML
+
+__Example__
+
+```xml
+  <my_data>
+    <channel id="0">
+      <l_band>
+        <coeffs frequency="900" a="0" b="40" c="1838"/>
+        <power frequency="900" value="-15"/>
+        <power frequency="950" value="-15"/>
+      </l_band>
+      <if_band>
+        <power frequency="30" value="-5"/>
+      </if_band>
+    </channel>
+  </my_data>
+```
+
+```python
+  import xml.etree.ElementTree as ET
+  xml_file = 'D:/my_data.xml'
+  tree = ET.parse(xml_file)
+  root = tree.getroot()
+  matched_child = None
+  for child in root:
+    if child.tag == "channel" and child.get('id') == 0:
+      child.attrib      # => {'id': '0'}
+```
+
+__Functions__
+
+```python
+  Element.iter('tag')       # Find all elements with a certain tag (children and subchildren)
+  Element.findall('tag')    # Find all children with a certain tag
+  Element.find('tag')       # Find the first child with a certain tag
+  Element.text              # Accesses the element's text content
+  Element.get()             # Accesses the element's attributes
+```
+
+---------------------------------------
+## JSON
+
+### JSON Encoding
+```python
+# To a file
+with open("data_file.json", "w") as write_file:
+    json.dump(data, write_file)
+# To a variable
+json_string = json.dumps(data)
+# Prettify
+json_string = json.dumps(data, indent=4)
+```
+
+### JSON Decoding
+```python
+# From a file
+with open("data_file.json", "r") as read_file:
+    data = json.load(read_file)
+# From a variable
+data = json.loads(json_string)
+
+# Utility function
+def load_json_file(file_path: str, default=None):
+    """Load JSON from file or return default if file doesn't exist"""
+    if default is None:
+        default = {}
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            return json.load(file)
+    return default
+```
+
+#### JSON Decoding into an object
+```python
+class Address(object):
+    def __init__(self, street, number):
+        self.street = street
+        self.number = number
+js = '{"street":"Sesame","number":122}'
+address = json.loads(js, object_hook=lambda d: Address(**d))
+
+# In the case of nested object
+class User(object):
+    def __init__(self, name, address):
+        self.name = name
+        self.address = Address(**address)
+js = '{"name":"Cristian", "address":{"street":"Sesame","number":122}}'
+j = json.loads(js)
+user = User(**j)
+```
+
+---------------------------------------
+## Protobuf
+To generate Python classes for our message:
+
+```sh
+# Generates your_proto_file_pb2.py
+protoc --python_out=. your_proto_file.proto
+```
+
+```python
+from google.protobuf import json_format
+
+message = YourMessageClass()
+message.ParseFromString(protobuf_message)
+
+# Convert the parsed message to a JSON string
+json_string = json_format.MessageToJson(message)
+
+from protobuf_decoder.protobuf_decoder import Parser
+parsed_data = Parser().parse(hex_string)
+```
+
+### Protobuf Types
+
+```python
+# List
+# 29: {1: {1: 6}}
+# 29: {1: {1: 23}}
+# .proto
+repeated MyList myList = 29;
+# .py
+item1 = filter.myList.add()
+item1.newEthnicities.ethnicities = 6
+item2 = filter.myList.add()
+item2.newEthnicities.ethnicities = 23
+```
+
+---------------------------------------
+# Testing
+
+## Timeit
+- From command-line interface:
+    `$ python -m timeit [-n number] [-s setup] [statement ...]`
+    - If `-n` is not given, a suitable number of loops is calculated by trying successive powers of 10 until the total time is at least 0.2 seconds.
+    - Example:
+        `$ python -m timeit '"-".join(str(n) for n in range(100))'`
+- From within Python:
+
+```python
+# Syntax
+    # `setup`: statement to be executed once initially
+    timeit.timeit(stmt='pass', setup='pass', number=1000000, globals=None)
+# Example:
+    import timeit
+    timeit.timeit('"-".join(str(n) for n in range(100))', number=10000)
+    timeit.timeit('my_func(10)', globals=globals())    # execute the code within your current global namespace
+```
+
+## Nose (Unit Test)
+Every file starts with `test` is considered a test file. Every function starts with `test` is considered a test function.
+
+A `setup`/`teardown` function can be called before/after running the test using `with_setup` decorator:
+
+```python
+@with_setup(setup, teardown)
+def test_something():
+    ...
+```
+
+## PyTest
+Install Pytest:
+
+```
+pip install -U pytest
+```
+
+Run pytest:
+
+```
+pytest
+```
+
+```python
+# test_great_functions.py
+from great_functions import add
+
+def test_add_1_4():
+    assert(add(1, 4) == 5)
+```
+
+## Profiling & Performance Evaluation
+
+### cProfile
+- Run the profiler:
+    `python3 -m cProfile -o x.prof test.py`
+- The profiling results will be stored in `x.prof`
+- You can optionally use `snakeviz` package for visualizing the results in the browser.
+- Run the visualizer:
+    `snakevis x.prof`
+
+__Note:__ Kivy programs need a workaround for this to work:
+https://kivy.org/doc/stable/api-kivy.app.html#profiling-with-on-start-and-on-stop
+
+### profilehooks
+Can be used to profile a single function with results printed to stdout at program exit or immediately if using `immediate=True`.
+
+```python
+from profilehooks import profile
+
+@profile(immediate=True)
+def my_function(args, etc):
+    pass
+```
+
+---------------------------------------
+# Libraries
 
 ## Random
 ```python
@@ -1577,112 +1857,6 @@ t.ctime()
 >>>'Mon Mar 11 00:00:00 2002'
 ```
 
-## Timeit
-- From command-line interface:
-    `$ python -m timeit [-n number] [-s setup] [statement ...]`
-    - If `-n` is not given, a suitable number of loops is calculated by trying successive powers of 10 until the total time is at least 0.2 seconds.
-    - Example:
-        `$ python -m timeit '"-".join(str(n) for n in range(100))'`
-- From within Python:
-
-```python
-# Syntax
-    # `setup`: statement to be executed once initially
-    timeit.timeit(stmt='pass', setup='pass', number=1000000, globals=None)
-# Example:
-    import timeit
-    timeit.timeit('"-".join(str(n) for n in range(100))', number=10000)
-    timeit.timeit('my_func(10)', globals=globals())    # execute the code within your current global namespace
-```
-
-## Simple GUI
-```python
-# Import
-    import simplegui
-# Frame creation
-    frame1 = simplegui.create_frame(title, canvas_width, canvas_height [, control_width])
-# Starting a Frame
-    frame1.start()
-# Adding a Label
-    [label1 =] frame1.add_label(text [, width])
-# Changing label text
-    label1.set_text("New Text")
-# Adding a Botton
-    def button_handler():...
-    frame1.add_button(text, button_handler [, width])
-# Adding an Input
-    def input_handler(string):...
-    frame1.add_input(text, input_handler , width)
-# Timer creation
-    def timer_handler():...
-    timer1 = simplegui.create_timer(interval_ms, timer_handler)
-# Starting a Timer
-    timer1.start()
-# Set Draw Handler
-    def draw_handler(canvas):...
-    frame.set_draw_handler(draw_handler)
-# Draw Text
-    canvas.draw_text(text, point, font_size, font_color[, font_face])
-# Draw a Circle
-    canvas.draw_circle(center_point, radius, line_width, line_color[, fill_color])
-# Draw a polygon
-    canvas.draw_polygon(point_list, line_width, line_color, fill_color = color)
-# Key down event
-    def keydown_handler(key): k = chr(key)
-    frame.set_keydown_handler(keydown_handler)
-# Key up enent
-    def keyup_handler(key): k = ' '
-    frame.set_keyup_handler(keyup_handler)
-# SimpleGUI Key map
-    if key == simplegui.KEY_MAP["left"]
-# Mouse click
-    def mouseclick_handler(position):        # position is a tuple of two integers (x, y)
-    frame.set_mouseclick_handler(mouseclick_handler)
-# Images
-    # Load an image
-    img = simplegui.load_image(URL)
-    # Draw an image
-    canvas.draw_image(img, src_center, src_size, dst_center, dst_size, angle=0)
-# Sounds
-    music = simplegui.load_sound("http://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg")
-    music.play()            # play some music, starts at last paused spot
-    music.pause()
-    music.rewind()          # rewind the music to the beginning
-    music.set_volume(0.5)   # Set volume to a value between 0-1.0
-```
-
-## Nose (Unit Test)
-Every file starts with `test` is considered a test file. Every function starts with `test` is considered a test function.
-
-A `setup`/`teardown` function can be called before/after running the test using `with_setup` decorator:
-
-```python
-@with_setup(setup, teardown)
-def test_something():
-    ...
-```
-
-## PyTest
-Install Pytest:
-
-```
-pip install -U pytest
-```
-
-Run pytest:
-
-```
-pytest
-```
-
-```python
-# test_great_functions.py
-from great_functions import add
-
-def test_add_1_4():
-    assert(add(1, 4) == 5)
-```
-
 ## Matplotlib
 ```python
 import matplotlib.pyplot as plt
@@ -1739,124 +1913,389 @@ arr2 = arr1.sum()
 arr2 = np.sum(arr1)
 ```
 
+## UUID
+It's recommended to use `udid4` as it creates a more random UDID.
+
+```python
+import uuid
+>>> uuid.uuid4()
+UUID('bd65600d-8669-4903-8a14-af88203add38')
+>>> str(uuid.uuid4())
+'f50ec0b7-f960-400d-91f0-c42a6d44e3d0'
+>>> uuid.uuid4().hex
+'9fe2c4e93f654fdbb24c02b15259716c'
+```
+
 ---------------------------------------
-## PyQt5
+# Web & Databases
 
-### Components
-
+## Requests
 ```python
-    # ComboBox
-    self.mode_box = QtWidgets.QComboBox()
-    self.mode_box.addItem("Telnet")
-    # Edit Box
-    self.edit_box = QtWidgets.QLineEdit()
-    self.edit_box.setMaxLength(25)
-    self.edit_box.setMaximumSize(40, 20)
-    self.edit_box.setAlignment(QtCore.Qt.AlignCenter)
-    self.edit_box.setEnabled(False)  # True by default
-    # Button
-    self.button = QtWidgets.QPushButton("Connect")
-    self.button.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)  # Size fits contents
-    # Checkbox
-    self.proxy = QtWidgets.QCheckBox("Proxy")
-    self.proxy.setTristate(False)
-    # Toolbar
-    self.ToolBar = self.addToolBar("Connect")
-    self.ToolBar.setMovable(False)
-    self.ToolBar.addWidget(self.mode_box)
-    self.ToolBar.addSeparator()
-    self.ToolBar.addWidget(self.edit_box)
-    # Statusbar
-    self.status_bar = self.statusBar()
-    self.status_bar.showMessage("Idle")
-    # Timer
-    self.timer = QtCore.QTimer()
-    self.timer.setInterval(10000)
-    self.timer.timeout.connect(self.perform_action)
-    self.timer.start()
+import requests
+headers = {
+    "Accept-Language":  "en-US",
+    "Accept-Encoding":  "gzip",
+}
+x = requests.get(url, headers=headers, timeout=5)
+
+# Timeout applies to the combination of `connect` and `read` timeouts.
+# When requesting a lot of data, we can set a highter read timeout
+x = requests.get(url, headers=headers, timeout=(5, 25))
+
+# Send as url encoded form
+# The headers will be set automatically if you pass a dict
+data = {'param1': 'value1', 'param2': 'value2'}
+r = requests.post(url, data=data, headers=headers)
+
+# A raw url encoded form
+# Content-Type: application/x-www-form-urlencoded
+payload ="scope=scope1&password=123&client_id=789&username=951&grant_type=password"
+response = requests.post(url, data=payload, headers=header)
+
+# Send as json
+r = requests.post(url, json=json.dumps(data))
+# OR: (this might work if the first method fails as it doesn't escape special characters)
+headers = {'content-type': 'application/json'}
+r = requests.post(url, data=json.dumps(data), headers=headers)
+
+# Query
+## example.org?address=xxx
+params = {'address': 'xxx'}
+r = requests.get(url=url, params=params)
+
+# Path variables
+## http://localhost:8080/test/api/v1/qc/:id
+params = {'id': '123'}
+requests.post(url="http://localhost:8080/test/api/v1/qc/{id}".format(**param)) 
+
+# Cookies
+## Getting cookies from a request
+r = requests.get(url)
+r.cookies['cookie_name']
+## Using cookies in a request
+r = requests.get("http://example.org", cookies={"my_cookie": "cookie_value"})
+
+# Extracting data in json format
+data = r.json()
+
+# Perform requests in the same session
+with requests.session() as s:
+    s.post(login_url, data=login_data)
+    r = requests.get(url)
+
+# Send files
+with f = open(path, 'rb'):
+    files = {'photo': f}
+    resp = requests.post(url, files=files)
 ```
 
-### Connecting Callbacks (Slots)
+### Saving an image from URL
 ```python
-    edit_box.returnPressed.connect(my_handler)
-    self.button.clicked.connect(my_handler)
-
-    def my_handler():
-        pass
+def DownloadImage(url):
+    try:
+        filename = url.split('/')[-1]
+        r = requests.get(url, headers=headers, stream=True, timeout=5)
+        if r.status_code == 200:
+            with open(filename, 'wb') as f:
+                r.raw.decode_content = True
+                shutil.copyfileobj(r.raw, f)
+    except Exception as e:
+        print(e)
 ```
 
-### Multithreading
-- Threads communicate using signals (`pyqtSignal`).
-- A `pyqtSignal` has to be defined within a class derived from `QObject`. That can be a `QThread` or a custom class.
-- An optional decorator `@pyqtSlot` can be added to provide more efficiency and readablility.
-- Threads automatically emmit `started` and `finished` signals, which can be connected to slots.
-
+### Converting an image to bytes
 ```python
-class DebugMonitor(QtCore.QObject):
-    # The type(s) of the signal parameter(s) need to be specified
-    error_signal = QtCore.pyqtSignal(str)
-
-    def __init__(self):
-        super().__init__()
-        self.error = False
-
-    def emit_on_error(self):
-    if self.error:
-        self.error_signal.emit('There is an error')
-
-
-# In the working thread
-class FWComThread(QtCore.QThread):
-    fwcom_error = QtCore.pyqtSignal()
-
-    def __init__(self):
-        super().__init__()
-        self.debug_monitor = DebugMonitor()
-
-    def run():
-        # What the thread needs to do
-
-
-# In the main thread
-class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.fwcom_thread = FWComThread()
-        self.fwcom_thread.start()
-        self.fwcom_thread.finished.connect(thread_finished)
-        self.fwcom_thread.debug_monitor.error_signal.connect(self.set_monitor_err_msg)
-        self.fwcom_thread.fwcom_error.connect(self.fwcom_error)
-
-    def disconnect_signals(self):
-        self.fwcom_thread.fwcom_error.disconnect()
-
-    @QtCore.pyqtSlot
-    def set_monitor_err_msg(self, err_msg: str):
-        QtWidgets.QMessageBox.warning(self, 'Tag Monitor Error', err_msg)
-
-    def fwcom_error(self):
-        QtWidgets.QMessageBox.warning(self, 'FWCOM Error', 'FWCOM crashed')
-
-    def thread_finished(self):
-        # gets executed if thread finished
-        pass
-
-app = QtWidgets.QApplication(sys.argv)
-window = MainWindow()
-# Optionally set the size
-window.resize(640, 480)
-window.show()
-app.exec_()
+def get_image_from_url(url, maxsize=(1200, 850)) -> Tuple[Optional[bytes], Tuple[int, int]]:
+    """Generate image data using PIL
+    :returns the image as bytes and it size as a tuple
+    """
+    try:
+        response = cached_session.get(url, stream=True, timeout=10)
+    except:
+        return None, (0, 0)
+    response.raw.decode_content = True
+    if not response.ok:
+        return None, (0, 0)
+    img = Image.open(response.raw)
+    img.thumbnail(maxsize)
+    size = img.size
+    bio = BytesIO()
+    img.save(bio, format="PNG")
+    del img
+    return bio.getvalue(), size
 ```
 
-#### Change Widget Color
+### Session Cookies
 ```python
-    def make_widget_red(widget: QtWidgets):
-        p = widget.palette()
-        p.setColor(widget.backgroundRole(), QtGui.QColor('red'))
-        widget.setPalette(p)
+# Save session cookies
+import requests, pickle
+session = requests.session()
+# Make some calls
+with open(SESSION_COOKIE_FILE, 'wb') as f:
+    pickle.dump(session.cookies, f)
+
+# Load session cookies
+session = requests.session()
+with open(SESSION_COOKIE_FILE, 'rb') as f:
+    session.cookies.update(pickle.load(f))
 ```
 
+## Request Cache
+`requests_cache` can either patch the std library requests making all requests go through it, or use its own session for requests.
+
+__Patching requests__
+
+```python
+import requests_cache
+requests_cache.install_cache('my_cache')
+response = requests.get(url)
+
+# Check if cache has a url
+requests_cache.get_cache().has_url(url)
+# If a URL has a part we ignore like a token, we might need to add it
+requests_cache.get_cache().has_url(url+'?t=x')
+```
+
+__Cached Session__
+
+```python
+import requests_cache
+# Create a cached session that can be used exactly like 'requests'
+cached_session = requests_cache.CachedSession()
+response = cached_session.get(url, stream=True, timeout=10)
+
+# Check if response came from cache
+response.from_cache
+
+# Check if cache has a url
+cached_session.cache.has_url(url)
+# If a URL has a part we ignore like a token, we might need to add it
+cached_session.cache.has_url(url+'?t=x')
+
+# Save cached content to json files
+src_session = CachedSession('my_cache', backend='redis')
+dest_session = CachedSession('./cache_dump_dir', backend='filesystem', serializer='json')
+dest_session.cache.update(src_session.cache)
+
+# To ignore URL parameters, e.g. a token or something that doesn't affect the response
+session = CachedSession(ignored_parameters=['token'])
+
+# A custom matching key can be used
+# See requests_cache.cache_keys.create_key() for the reference implementation
+def create_cache_key(
+    request: requests_cache.AnyRequest,
+    ignored_parameters=None,
+    **request_kwargs,
+) -> str:
+    request = requests_cache.normalize_request(request, ignored_parameters)
+    # The url looks like https://x.y.com/...
+    # The x part can change, so just match the part after it
+    url = request.url.partition('.')[2]
+    assert url
+    key = hashlib.blake2b(digest_size=8)
+    key.update(url.encode('utf-8'))
+    return key.hexdigest()
+cached_session = requests_cache.CachedSession(key_fn=create_cache_key, ignored_parameters=['t'])
+```
+
+__Manipulating the cache DB__
+
+```python
+from requests_cache import CachedSession
+import sqlite3
+
+cache_path = '/Users/path/to/http_cache.sqlite'
+session = CachedSession(cache_path, backend='sqlite')
+total_items = len(session.cache.responses)
+
+# Iterate over items
+for key in session.cache.responses.keys():
+    response = session.cache.responses.get(key)
+# Response has the following attributes
+['cookies', 'created_at', 'elapsed', 'encoding', 'expires', 'headers', 'history', 'raw', 'reason', 'request', 'status_code', 'url']
+# Remove an item
+del session.cache.responses[key]
+
+```
+
+## URL
+
+### URL Validation
+```python
+>>> import validators
+>>> validators.url("http://google.com")
+True
+```
+
+### URL Parsing and Manipulation
+```python
+from urllib.parse import urlparse, urljoin, quote
+url = "http://www.example.com/users/john-doe/detail"
+
+# Parsing
+parsed = urlparse(url)
+parsed.hostname     # www.example.com
+parsed.path
+
+# Join
+full_url = urljoin(url, 'index.html')
+
+# Escaping invalid characters
+url = quote(url)
+```
+
+## Web Scrapping with BeautifulSoup
+We use `requests` to fetch web pages and `BeautifulSoup` to access the elements.
+
+```python
+from bs4 import BeautifulSoup
+import requests
+
+url = 'https://www.google.com'
+req = requests.get(url)
+soup = BeautifulSoup(req.content, features="html.parser")
+
+# HTML contentes
+print(soup.prettify())
+# Getting the first 'div' tag
+tag = soup.div
+# For a tag with dashes
+tag = soup.find('my-tag')
+# Tag contents as a list
+tag.contents
+# Accessing an inner tag. First encountered p
+tag.p
+# Accessing an attribute
+tag.p['class']
+tag.p.get('class')
+# Convert to contents to plain text (remove <strong> and <b> etc.)
+tag.p.text
+
+# Prettify the HTML
+tag.prettify()
+# Get the tag tree as HTML string
+str(tag)
+# Extract plain text (the shown text when visiting the page)
+tag.get_text()
+
+# Finding a tag using name and attributes
+# soup.find(name, attrs, recursive, text)
+tag = soup.find('div')  # Identical to soup.div
+tag = soup.find(id='img', alt='x')
+tag = soup.find(id='content_div')
+tag = soup.find(attr={"class": "myclass"})
+# Find all matching elements
+tags = soup.find_all('a')
+
+# Get full url from relative href
+from urllib.parse import urljoin
+link = urljoin(base_url, href)
+```
+
+### Open website in browser
+```python
+import webbrowser
+webbrowser.open_new_tab('http://net-informations.com')
+# To open in the default broswer use:
+webbrowser.get().open()
+# Open a local file
+webbrowser.get().open_new_tab(f'file://{os.path.realpath(filename)}')
+```
+
+If new is 0, the url is opened in the same browser window if possible. If new is 1, a new browser window is opened if possible. If new is 2, a new browser page ("tab") is opened if possible.
+
+### Open an image from URL
+```python
+from PIL import Image, ImageTk
+import requests
+from io import BytesIO
+url = "../image_url"
+response = requests.get(url)
+img = Image.open(BytesIO(response.content))
+```
+---------------------------------------
+## Telegram
+
+### Useful Resources
+How to implement access control for a Telegram bot
+https://advancedweb.hu/how-to-implement-access-control-for-a-telegram-bot/
+
+Create a Telegram Bot with AWS Lambda Integration
+https://dev.to/aws-builders/create-a-telegram-bot-with-aws-lambda-integration-part-1-4616
+
+Send notifications to a Telegram bot for events in an AWS account
+https://advancedweb.hu/send-notifications-to-a-telegram-bot-for-events-in-an-aws-account/
+
+Deploy a serverless Telegram bot to AWS using Terraform
+https://advancedweb.hu/deploy-a-serverless-telegram-bot-to-aws-using-terraform/
+
+
+### Create a bot to send notifications
+
+1) Go into settings (web or app) and set a username (if you don't have one already).
+This is needed to obtain an id which your bot will use to send messages to
+
+2) Send a message to RawDataBot to get your id
+Just search for RawDataBot and send any message (hi will do). Take a note of your id.
+
+3) Create your bot (which you'll command with HTTP requests)
+Now search for BotFather and send the message `/start`. Help is displayed. Send the message `/newbot` and follow the instructions. Take a note of your token to access the HTTP API.
+
+4) Send the API request using Python
+
+__Method 1: Using requests__
+
+API docs: https://core.telegram.org/bots/api
+
+```python
+token = 'xxx'
+url = f'https://api.telegram.org/bot{token}'
+params = {'chat_id': '123', 'text': msg}
+r = requests.get(url + '/sendMessage', params=params)
+```
+
+__Method 2 - Using library__
+
+Install libraries
+
+```sh
+python-telegram-bot==13.5
+telegram-send==0.34
+```
+
+Create a file `telegram.conf` with the credentials.
+
+```sh
+[telegram]
+token = xxx
+chat_id = 123
+```
+
+```python
+# Text
+telegram_send.send(messages=[msg], conf='telegram.conf')
+# Image
+with open(image_file, "rb") as f:
+    telegram_send.send(images=[f], conf='telegram.conf')
+```
+
+### Send messages from bot to private channel
+First we need to find the channel ID:
+1. Add the bot to the channel as admin
+2. (Maybe not needed) Send any message in the channel/group.
+3. Go to getUpdates API URL in the browser and find the channel ID:
+
+https://api.telegram.org/bot<BOT_TOKEN>/getUpdates
+
+```json
+...
+ "my_chat_member":{
+    "chat":{
+       "id":-100987654321,
+       "title":"My Channel",
+       "type":"channel"
+    },
+```
 
 ---------------------------------------
 ## PostgreSQL with psycopg2
@@ -2533,233 +2972,184 @@ json.dump(data, f, cls=JSONEncoder)
 
 ---------------------------------------
 
-## Requests
+_______________________________________________________________________________
+
+# GUI
+
+## Simple GUI
 ```python
-import requests
-headers = {
-    "Accept-Language":  "en-US",
-    "Accept-Encoding":  "gzip",
-}
-x = requests.get(url, headers=headers, timeout=5)
-
-# Timeout applies to the combination of `connect` and `read` timeouts.
-# When requesting a lot of data, we can set a highter read timeout
-x = requests.get(url, headers=headers, timeout=(5, 25))
-
-# Send as url encoded form
-# The headers will be set automatically if you pass a dict
-data = {'param1': 'value1', 'param2': 'value2'}
-r = requests.post(url, data=data, headers=headers)
-
-# A raw url encoded form
-# Content-Type: application/x-www-form-urlencoded
-payload ="scope=scope1&password=123&client_id=789&username=951&grant_type=password"
-response = requests.post(url, data=payload, headers=header)
-
-# Send as json
-r = requests.post(url, json=json.dumps(data))
-# OR: (this might work if the first method fails as it doesn't escape special characters)
-headers = {'content-type': 'application/json'}
-r = requests.post(url, data=json.dumps(data), headers=headers)
-
-# Query
-## example.org?address=xxx
-params = {'address': 'xxx'}
-r = requests.get(url=url, params=params)
-
-# Path variables
-## http://localhost:8080/test/api/v1/qc/:id
-params = {'id': '123'}
-requests.post(url="http://localhost:8080/test/api/v1/qc/{id}".format(**param)) 
-
-# Cookies
-## Getting cookies from a request
-r = requests.get(url)
-r.cookies['cookie_name']
-## Using cookies in a request
-r = requests.get("http://example.org", cookies={"my_cookie": "cookie_value"})
-
-# Extracting data in json format
-data = r.json()
-
-# Perform requests in the same session
-with requests.session() as s:
-    s.post(login_url, data=login_data)
-    r = requests.get(url)
-
-# Send files
-with f = open(path, 'rb'):
-    files = {'photo': f}
-    resp = requests.post(url, files=files)
+# Import
+    import simplegui
+# Frame creation
+    frame1 = simplegui.create_frame(title, canvas_width, canvas_height [, control_width])
+# Starting a Frame
+    frame1.start()
+# Adding a Label
+    [label1 =] frame1.add_label(text [, width])
+# Changing label text
+    label1.set_text("New Text")
+# Adding a Botton
+    def button_handler():...
+    frame1.add_button(text, button_handler [, width])
+# Adding an Input
+    def input_handler(string):...
+    frame1.add_input(text, input_handler , width)
+# Timer creation
+    def timer_handler():...
+    timer1 = simplegui.create_timer(interval_ms, timer_handler)
+# Starting a Timer
+    timer1.start()
+# Set Draw Handler
+    def draw_handler(canvas):...
+    frame.set_draw_handler(draw_handler)
+# Draw Text
+    canvas.draw_text(text, point, font_size, font_color[, font_face])
+# Draw a Circle
+    canvas.draw_circle(center_point, radius, line_width, line_color[, fill_color])
+# Draw a polygon
+    canvas.draw_polygon(point_list, line_width, line_color, fill_color = color)
+# Key down event
+    def keydown_handler(key): k = chr(key)
+    frame.set_keydown_handler(keydown_handler)
+# Key up enent
+    def keyup_handler(key): k = ' '
+    frame.set_keyup_handler(keyup_handler)
+# SimpleGUI Key map
+    if key == simplegui.KEY_MAP["left"]
+# Mouse click
+    def mouseclick_handler(position):        # position is a tuple of two integers (x, y)
+    frame.set_mouseclick_handler(mouseclick_handler)
+# Images
+    # Load an image
+    img = simplegui.load_image(URL)
+    # Draw an image
+    canvas.draw_image(img, src_center, src_size, dst_center, dst_size, angle=0)
+# Sounds
+    music = simplegui.load_sound("http://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg")
+    music.play()            # play some music, starts at last paused spot
+    music.pause()
+    music.rewind()          # rewind the music to the beginning
+    music.set_volume(0.5)   # Set volume to a value between 0-1.0
 ```
 
-### Saving an image from URL
-```python
-def DownloadImage(url):
-    try:
-        filename = url.split('/')[-1]
-        r = requests.get(url, headers=headers, stream=True, timeout=5)
-        if r.status_code == 200:
-            with open(filename, 'wb') as f:
-                r.raw.decode_content = True
-                shutil.copyfileobj(r.raw, f)
-    except Exception as e:
-        print(e)
-```
+_______________________________________________________________________________
+## PyQt5
 
-### Converting an image to bytes
-```python
-def get_image_from_url(url, maxsize=(1200, 850)) -> Tuple[Optional[bytes], Tuple[int, int]]:
-    """Generate image data using PIL
-    :returns the image as bytes and it size as a tuple
-    """
-    try:
-        response = cached_session.get(url, stream=True, timeout=10)
-    except:
-        return None, (0, 0)
-    response.raw.decode_content = True
-    if not response.ok:
-        return None, (0, 0)
-    img = Image.open(response.raw)
-    img.thumbnail(maxsize)
-    size = img.size
-    bio = BytesIO()
-    img.save(bio, format="PNG")
-    del img
-    return bio.getvalue(), size
-```
-
-### Session Cookies
-```python
-# Save session cookies
-import requests, pickle
-session = requests.session()
-# Make some calls
-with open(SESSION_COOKIE_FILE, 'wb') as f:
-    pickle.dump(session.cookies, f)
-
-# Load session cookies
-session = requests.session()
-with open(SESSION_COOKIE_FILE, 'rb') as f:
-    session.cookies.update(pickle.load(f))
-```
-
-## Request Cache
-`requests_cache` can either patch the std library requests making all requests go through it, or use its own session for requests.
-
-__Patching requests__
+### Components
 
 ```python
-import requests_cache
-requests_cache.install_cache('my_cache')
-response = requests.get(url)
-
-# Check if cache has a url
-requests_cache.get_cache().has_url(url)
-# If a URL has a part we ignore like a token, we might need to add it
-requests_cache.get_cache().has_url(url+'?t=x')
+    # ComboBox
+    self.mode_box = QtWidgets.QComboBox()
+    self.mode_box.addItem("Telnet")
+    # Edit Box
+    self.edit_box = QtWidgets.QLineEdit()
+    self.edit_box.setMaxLength(25)
+    self.edit_box.setMaximumSize(40, 20)
+    self.edit_box.setAlignment(QtCore.Qt.AlignCenter)
+    self.edit_box.setEnabled(False)  # True by default
+    # Button
+    self.button = QtWidgets.QPushButton("Connect")
+    self.button.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)  # Size fits contents
+    # Checkbox
+    self.proxy = QtWidgets.QCheckBox("Proxy")
+    self.proxy.setTristate(False)
+    # Toolbar
+    self.ToolBar = self.addToolBar("Connect")
+    self.ToolBar.setMovable(False)
+    self.ToolBar.addWidget(self.mode_box)
+    self.ToolBar.addSeparator()
+    self.ToolBar.addWidget(self.edit_box)
+    # Statusbar
+    self.status_bar = self.statusBar()
+    self.status_bar.showMessage("Idle")
+    # Timer
+    self.timer = QtCore.QTimer()
+    self.timer.setInterval(10000)
+    self.timer.timeout.connect(self.perform_action)
+    self.timer.start()
 ```
 
-__Cached Session__
+### Connecting Callbacks (Slots)
+```python
+    edit_box.returnPressed.connect(my_handler)
+    self.button.clicked.connect(my_handler)
+
+    def my_handler():
+        pass
+```
+
+### Qt Multithreading
+- Threads communicate using signals (`pyqtSignal`).
+- A `pyqtSignal` has to be defined within a class derived from `QObject`. That can be a `QThread` or a custom class.
+- An optional decorator `@pyqtSlot` can be added to provide more efficiency and readablility.
+- Threads automatically emmit `started` and `finished` signals, which can be connected to slots.
 
 ```python
-import requests_cache
-# Create a cached session that can be used exactly like 'requests'
-cached_session = requests_cache.CachedSession()
-response = cached_session.get(url, stream=True, timeout=10)
+class DebugMonitor(QtCore.QObject):
+    # The type(s) of the signal parameter(s) need to be specified
+    error_signal = QtCore.pyqtSignal(str)
 
-# Check if response came from cache
-response.from_cache
+    def __init__(self):
+        super().__init__()
+        self.error = False
 
-# Check if cache has a url
-cached_session.cache.has_url(url)
-# If a URL has a part we ignore like a token, we might need to add it
-cached_session.cache.has_url(url+'?t=x')
+    def emit_on_error(self):
+    if self.error:
+        self.error_signal.emit('There is an error')
 
-# Save cached content to json files
-src_session = CachedSession('my_cache', backend='redis')
-dest_session = CachedSession('./cache_dump_dir', backend='filesystem', serializer='json')
-dest_session.cache.update(src_session.cache)
 
-# To ignore URL parameters, e.g. a token or something that doesn't affect the response
-session = CachedSession(ignored_parameters=['token'])
+# In the working thread
+class FWComThread(QtCore.QThread):
+    fwcom_error = QtCore.pyqtSignal()
 
-# A custom matching key can be used
-# See requests_cache.cache_keys.create_key() for the reference implementation
-def create_cache_key(
-    request: requests_cache.AnyRequest,
-    ignored_parameters=None,
-    **request_kwargs,
-) -> str:
-    request = requests_cache.normalize_request(request, ignored_parameters)
-    # The url looks like https://x.y.com/...
-    # The x part can change, so just match the part after it
-    url = request.url.partition('.')[2]
-    assert url
-    key = hashlib.blake2b(digest_size=8)
-    key.update(url.encode('utf-8'))
-    return key.hexdigest()
-cached_session = requests_cache.CachedSession(key_fn=create_cache_key, ignored_parameters=['t'])
+    def __init__(self):
+        super().__init__()
+        self.debug_monitor = DebugMonitor()
+
+    def run():
+        # What the thread needs to do
+
+
+# In the main thread
+class MainWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.fwcom_thread = FWComThread()
+        self.fwcom_thread.start()
+        self.fwcom_thread.finished.connect(thread_finished)
+        self.fwcom_thread.debug_monitor.error_signal.connect(self.set_monitor_err_msg)
+        self.fwcom_thread.fwcom_error.connect(self.fwcom_error)
+
+    def disconnect_signals(self):
+        self.fwcom_thread.fwcom_error.disconnect()
+
+    @QtCore.pyqtSlot
+    def set_monitor_err_msg(self, err_msg: str):
+        QtWidgets.QMessageBox.warning(self, 'Tag Monitor Error', err_msg)
+
+    def fwcom_error(self):
+        QtWidgets.QMessageBox.warning(self, 'FWCOM Error', 'FWCOM crashed')
+
+    def thread_finished(self):
+        # gets executed if thread finished
+        pass
+
+app = QtWidgets.QApplication(sys.argv)
+window = MainWindow()
+# Optionally set the size
+window.resize(640, 480)
+window.show()
+app.exec_()
 ```
 
-__Manipulating the cache DB__
-
+#### Change Widget Color
 ```python
-from requests_cache import CachedSession
-import sqlite3
-
-cache_path = '/Users/path/to/http_cache.sqlite'
-session = CachedSession(cache_path, backend='sqlite')
-total_items = len(session.cache.responses)
-
-# Iterate over items
-for key in session.cache.responses.keys():
-    response = session.cache.responses.get(key)
-# Response has the following attributes
-['cookies', 'created_at', 'elapsed', 'encoding', 'expires', 'headers', 'history', 'raw', 'reason', 'request', 'status_code', 'url']
-# Remove an item
-del session.cache.responses[key]
-
+    def make_widget_red(widget: QtWidgets):
+        p = widget.palette()
+        p.setColor(widget.backgroundRole(), QtGui.QColor('red'))
+        widget.setPalette(p)
 ```
 
-## URL
-
-### URL Validation
-```python
->>> import validators
->>> validators.url("http://google.com")
-True
-```
-
-### URL Parsing and Manipulation
-```python
-from urllib.parse import urlparse, urljoin, quote
-url = "http://www.example.com/users/john-doe/detail"
-
-# Parsing
-parsed = urlparse(url)
-parsed.hostname     # www.example.com
-parsed.path
-
-# Join
-full_url = urljoin(url, 'index.html')
-
-# Escaping invalid characters
-url = quote(url)
-```
-
-## UUID
-It's recommended to use `udid4` as it creates a more random UDID.
-
-```python
-import uuid
->>> uuid.uuid4()
-UUID('bd65600d-8669-4903-8a14-af88203add38')
->>> str(uuid.uuid4())
-'f50ec0b7-f960-400d-91f0-c42a6d44e3d0'
->>> uuid.uuid4().hex
-'9fe2c4e93f654fdbb24c02b15259716c'
-```
 _______________________________________________________________________________
 
 ## Kivy
@@ -3349,7 +3739,7 @@ music.play()
 music.stop()
 ```
 
-### Widgets in Python
+### Kivy Widgets in Python
 App with one widget.
 
 ```python
@@ -3508,7 +3898,7 @@ def is_desktop():
     return False
 ```
 
-### Scheduling
+### Scheduling Kivy Events
 
 ```python
 from kivy.properties import Clock
@@ -3859,31 +4249,7 @@ class TaaSGUIApp(MDApp):
 ```
 _______________________________________________________________________________
 _______________________________________________________________________________
-# Profiling
 
-## cProfile
-- Run the profiler:
-    `python3 -m cProfile -o x.prof test.py`
-- The profiling results will be stored in `x.prof`
-- You can optionally use `snakeviz` package for visualizing the results in the browser.
-- Run the visualizer:
-    `snakevis x.prof`
-
-__Note:__ Kivy programs need a workaround for this to work:
-https://kivy.org/doc/stable/api-kivy.app.html#profiling-with-on-start-and-on-stop
-
-## profilehooks
-Can be used to profile a single function with results printed to stdout at program exit or immediately if using `immediate=True`.
-
-```python
-from profilehooks import profile
-
-@profile(immediate=True)
-def my_function(args, etc):
-    pass
-```
-
----------------------------------------
 # Concurrancy
 
 ## Concurrent Futures
@@ -4019,233 +4385,116 @@ os.system('taskset -cp 0-%d %s' % (pool_size, os.getpid()))
 ```
 
 ---------------------------------------
-# CSV
-
-## CSV Reader
-
-```
-1/2/2014,5,8,red
-no delimeter
-```
-
-```python
-import csv
-with open('example.csv') as csvfile:
-    # Return a reader, which is a list of lists
-    #[ ['1/2/2014', '5', '8', 'red'], ['no delimiter'] ]
-    readCSV = csv.reader(csvfile, delimiter=',')
-    for row in readCSV:
-        ...
-```
-
-## CSV Writer
-```python
-    import csv
-    csvfile = open('filename.csv', 'w', newline='')
-    writer = csv.writer(csvfile, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    csvData = ['Band', 'Frequency', 'Baud Rate', "MER"]
-    writer.writerow(csvData)
-    csvfile.close()
-    for child in root:
-        # ...
-```
-
----------------------------------------
-# XML
-
-## Example
-```xml
-  <my_data>
-    <channel id="0">
-      <l_band>
-        <coeffs frequency="900" a="0" b="40" c="1838"/>
-        <power frequency="900" value="-15"/>
-        <power frequency="950" value="-15"/>
-      </l_band>
-      <if_band>
-        <power frequency="30" value="-5"/>
-      </if_band>
-    </channel>
-  </my_data>
-```
-```python
-  import xml.etree.ElementTree as ET
-  xml_file = 'D:/my_data.xml'
-  tree = ET.parse(xml_file)
-  root = tree.getroot()
-  matched_child = None
-  for child in root:
-    if child.tag == "channel" and child.get('id') == 0:
-      child.attrib      # => {'id': '0'}
-```
-
-## Functions
-```python
-  Element.iter('tag')       # Find all elements with a certain tag (children and subchildren)
-  Element.findall('tag')    # Find all children with a certain tag
-  Element.find('tag')       # Find the first child with a certain tag
-  Element.text              # Accesses the element's text content
-  Element.get()             # Accesses the element's attributes
-```
-
----------------------------------------
-# Web Scrapping with BeautifulSoup
-We use `requests` to fetch web pages and `BeautifulSoup` to access the elements.
-
-```python
-from bs4 import BeautifulSoup
-import requests
-
-url = 'https://www.google.com'
-req = requests.get(url)
-soup = BeautifulSoup(req.content, features="html.parser")
-
-# HTML contentes
-print(soup.prettify())
-# Getting the first 'div' tag
-tag = soup.div
-# For a tag with dashes
-tag = soup.find('my-tag')
-# Tag contents as a list
-tag.contents
-# Accessing an inner tag. First encountered p
-tag.p
-# Accessing an attribute
-tag.p['class']
-tag.p.get('class')
-# Convert to contents to plain text (remove <strong> and <b> etc.)
-tag.p.text
-
-# Prettify the HTML
-tag.prettify()
-# Get the tag tree as HTML string
-str(tag)
-# Extract plain text (the shown text when visiting the page)
-tag.get_text()
-
-# Finding a tag using name and attributes
-# soup.find(name, attrs, recursive, text)
-tag = soup.find('div')  # Identical to soup.div
-tag = soup.find(id='img', alt='x')
-tag = soup.find(id='content_div')
-tag = soup.find(attr={"class": "myclass"})
-# Find all matching elements
-tags = soup.find_all('a')
-
-# Get full url from relative href
-from urllib.parse import urljoin
-link = urljoin(base_url, href)
-```
-
-## Open website in browser
-```python
-import webbrowser
-webbrowser.open_new_tab('http://net-informations.com')
-# To open in the default broswer use:
-webbrowser.get().open()
-# Open a local file
-webbrowser.get().open_new_tab(f'file://{os.path.realpath(filename)}')
-```
-
-If new is 0, the url is opened in the same browser window if possible. If new is 1, a new browser window is opened if possible. If new is 2, a new browser page ("tab") is opened if possible.
-
-## Open an image from URL
-```python
-from PIL import Image, ImageTk
-import requests
-from io import BytesIO
-url = "../image_url"
-response = requests.get(url)
-img = Image.open(BytesIO(response.content))
-```
-
----------------------------------------
-# JSON
-
-## Encoding
-```python
-# To a file
-with open("data_file.json", "w") as write_file:
-    json.dump(data, write_file)
-# To a variable
-json_string = json.dumps(data)
-# Prettify
-json_string = json.dumps(data, indent=4)
-```
-
-## Decoding
-```python
-# From a file
-with open("data_file.json", "r") as read_file:
-    data = json.load(read_file)
-# From a variable
-data = json.loads(json_string)
-
-# Utility function
-def load_json_file(file_path: str, default=None):
-    """Load JSON from file or return default if file doesn't exist"""
-    if default is None:
-        default = {}
-    if os.path.exists(file_path):
-        with open(file_path, "r") as file:
-            return json.load(file)
-    return default
-```
-
-### Decoding into an object
-```python
-class Address(object):
-    def __init__(self, street, number):
-        self.street = street
-        self.number = number
-js = '{"street":"Sesame","number":122}'
-address = json.loads(js, object_hook=lambda d: Address(**d))
-
-# In the case of nested object
-class User(object):
-    def __init__(self, name, address):
-        self.name = name
-        self.address = Address(**address)
-js = '{"name":"Cristian", "address":{"street":"Sesame","number":122}}'
-j = json.loads(js)
-user = User(**j)
-```
-
----------------------------------------
-# Protobuf
-To generate Python classes for our message:
+## Streamlit
+Streamlit is useful to easily create elegant web apps and is specially suitable for ML applications.
+Streamlit reruns the whole script whenever the user interacts with widgets, e.g. clicking a button. Callbacks (`on_change`, `on_click`, etc.) are run before the rest of the script when triggered.
 
 ```sh
-# Generates your_proto_file_pb2.py
-protoc --python_out=. your_proto_file.proto
+streamlit run script.py [-- script_args]
 ```
 
+### Streamlit Widgets
+
 ```python
-from google.protobuf import json_format
+import streamlit as st
 
-message = YourMessageClass()
-message.ParseFromString(protobuf_message)
+# Page title
+st.title("My Great App")
 
-# Convert the parsed message to a JSON string
-json_string = json_format.MessageToJson(message)
+# Text input
+name = st.text_input("Enter your name")
 
-from protobuf_decoder.protobuf_decoder import Parser
-parsed_data = Parser().parse(hex_string)
+# Checkbox to show/hide data
+if st.checkbox('Show text'):
+    st.write('Text')
+
+# Use a selectbox for options
+option = st.selectbox(
+    'Which number do you like best?',
+     [1,2,3])
+'You selected: ', option
+
+# ** Chat widgets **
+# Input that's positioned on the button of the layout
+prompt = st.chat_input()
+# Display a chat message from the user or the app
+st.chat_message(ROLE, avatar=AVATAR)
+AVATARS = {
+    "user": "👤",
+    "assistant": "📘",
+}
+with st.chat_message(message["role"], avatar=AVATARS.get(message["role"], None)):
+    st.markdown(message["content"])
+
+# ** Magic **
+# Variables and literals are automatically written using st.write
+x = 10
+'x', x      # Writes "x 10"
 ```
 
-## Protobuf Types
-§
+### Streamlit Layout & Containers
+Widgets can be arranged into different layouts and containers.
+- `sidebar`
+- `expander`
+- `columns`
+
+https://docs.streamlit.io/develop/api-reference/layout
+
 ```python
-# List
-# 29: {1: {1: 6}}
-# 29: {1: {1: 23}}
-# .proto
-repeated MyList myList = 29;
-# .py
-item1 = filter.myList.add()
-item1.newEthnicities.ethnicities = 6
-item2 = filter.myList.add()
-item2.newEthnicities.ethnicities = 23
+# Two ways to add a widget to a container
+with st.sidebar:
+    k = st.slider("Sources to retrieve", min_value=1, max_value=5, value=3)
+# OR
+k = st.sidebar.slider("Sources to retrieve", min_value=1, max_value=5, value=3)
+
+```
+
+### Session State
+We can store persistent data in the session state. It can hold any arbitrary variables.
+
+```python
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+if st.button("Clear chat"):
+    st.session_state.messages = []
+for message in st.session_state.messages:
+    with st.chat_message(message["title"]):
+        st.markdown(message["content"])
+```
+
+### Cached Resources
+We can mark functions as cached resources so their returned values are cached for future calls.
+
+```python
+@st.cache_resource
+def get_rag_resources():
+    embeddings = create_embeddings()
+    vector_store = load_vector_store(embeddings)
+    llm = create_llm()
+    return vector_store, llm
+
+# Cache can be cleared if needed
+if st.button("Clear Cache"):
+    get_rag_resources.clear()
+```
+
+### Config
+Streamlit config lives in `.streamlit/config.toml`. All available config can be viewed with:
+
+```sh
+streamlit config show
+```
+
+Useful configs to set:
+
+```toml
+[browser]
+# Disable telemetry
+gatherUsageStats = false
+
+[server]
+# Apply file changes on save
+runOnSave = true
 ```
 
 ---------------------------------------
@@ -4261,93 +4510,6 @@ with serial.Serial('/dev/ttyUSB3') as ser:
     ser.write(b'AT+CPSI?\r')
     chars =  ser.read(2)
     line = ser.readline()
-```
-
----------------------------------------
-# Telegram
-
-## Useful Resources
-How to implement access control for a Telegram bot
-https://advancedweb.hu/how-to-implement-access-control-for-a-telegram-bot/
-
-Create a Telegram Bot with AWS Lambda Integration
-https://dev.to/aws-builders/create-a-telegram-bot-with-aws-lambda-integration-part-1-4616
-
-
-Send notifications to a Telegram bot for events in an AWS account
-https://advancedweb.hu/send-notifications-to-a-telegram-bot-for-events-in-an-aws-account/
-
-
-Deploy a serverless Telegram bot to AWS using Terraform
-https://advancedweb.hu/deploy-a-serverless-telegram-bot-to-aws-using-terraform/
-
-
-
-## Create a bot to send notifications
-
-1) Go into settings (web or app) and set a username (if you don't have one already).
-This is needed to obtain an id which your bot will use to send messages to
-
-2) Send a message to RawDataBot to get your id
-Just search for RawDataBot and send any message (hi will do). Take a note of your id.
-
-3) Create your bot (which you'll command with HTTP requests)
-Now search for BotFather and send the message `/start`. Help is displayed. Send the message `/newbot` and follow the instructions. Take a note of your token to access the HTTP API.
-
-4) Send the API request using Python
-
-__Method 1: Using requests__
-
-API docs: https://core.telegram.org/bots/api
-
-```python
-token = 'xxx'
-url = f'https://api.telegram.org/bot{token}'
-params = {'chat_id': '123', 'text': msg}
-r = requests.get(url + '/sendMessage', params=params)
-```
-
-__Method 2 - Using library__
-
-Install libraries
-
-```sh
-python-telegram-bot==13.5
-telegram-send==0.34
-```
-
-Create a file `telegram.conf` with the credentials.
-
-```sh
-[telegram]
-token = xxx
-chat_id = 123
-```
-
-```python
-# Text
-telegram_send.send(messages=[msg], conf='telegram.conf')
-# Image
-with open(image_file, "rb") as f:
-    telegram_send.send(images=[f], conf='telegram.conf')
-```
-
-## Send messages from bot to private channel
-First we need to find the channel ID:
-1. Add the bot to the channel as admin
-2. (Maybe not needed) Send any message in the channel/group.
-3. Go to getUpdates API URL in the browser and find the channel ID:
-
-https://api.telegram.org/bot<BOT_TOKEN>/getUpdates
-
-```json
-...
- "my_chat_member":{
-    "chat":{
-       "id":-100987654321,
-       "title":"My Channel",
-       "type":"channel"
-    },
 ```
 
 ---------------------------------------
@@ -4414,7 +4576,7 @@ To run files from a local web server (at the current directory) as `localhost:80
 python3 -m http.server 8000
 ```
 
-## Web server with rquest logging
+## Web server with request logging
 ```python
 #!/usr/bin/env python3
 """
